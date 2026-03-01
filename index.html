@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>כיתה ז׳2 — בן גוריון הרצליה</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Alef', Arial, sans-serif;
+      background:
+        radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
+        linear-gradient(160deg, #07060f 0%, #131129 50%, #0e1628 100%);
+      background-size: 28px 28px, cover;
+      background-attachment: fixed, fixed;
+      color: #e2e8f0;
+      direction: rtl;
+      min-height: 100vh;
+    }
+
+    /* ── STICKY NAV ── */
+    .top-nav {
+      position: fixed;
+      top: 0; right: 0; left: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(10, 8, 30, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 10px 20px;
+      flex-wrap: wrap;
+    }
+
+    .top-nav a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.87rem;
+      padding: 5px 16px;
+      border-radius: 20px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .top-nav a:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(74,144,217,0.2) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(168,85,247,0.17) 0%, transparent 60%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 20px 70px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Glowing ring decoration */
+    .hero-ring {
+      position: absolute;
+      width: 520px; height: 520px;
+      border: 1px solid rgba(74,144,217,0.12);
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-ring:nth-child(2) {
+      width: 760px; height: 760px;
+      border-color: rgba(74,144,217,0.06);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .school-logo {
+      height: 100px;
+      width: auto;
+      max-width: 320px;
+      filter: brightness(0) invert(1);
+      opacity: 0.88;
+      margin-bottom: 24px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero h1 {
+      font-size: clamp(3.2rem, 11vw, 6rem);
+      font-weight: 800;
+      color: white;
+      line-height: 1.05;
+      margin-bottom: 10px;
+      letter-spacing: -1px;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      color: #94a3b8;
+      margin-bottom: 60px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Hero navigation cards */
+    .hero-cards {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 22px;
+      padding: 30px 32px 26px;
+      text-decoration: none;
+      color: white;
+      width: 152px;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.25s;
+      border-radius: 22px;
+    }
+
+    .hero-card.card-blue::before  { background: radial-gradient(ellipse at 50% 0%, rgba(74,144,217,0.25) 0%, transparent 70%); }
+    .hero-card.card-teal::before  { background: radial-gradient(ellipse at 50% 0%, rgba(20,184,166,0.25) 0%, transparent 70%); }
+    .hero-card.card-violet::before{ background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.25) 0%, transparent 70%); }
+    .hero-card.card-amber::before { background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.25) 0%, transparent 70%); }
+
+    .hero-card:hover::before { opacity: 1; }
+
+    .hero-card:hover {
+      border-color: rgba(255,255,255,0.22);
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .card-icon-wrap {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-blue  .card-icon-wrap { background: linear-gradient(135deg, #1d5fa8 0%, #4a90d9 100%); }
+    .card-teal  .card-icon-wrap { background: linear-gradient(135deg, #0d7377 0%, #14b8a6 100%); }
+    .card-violet.card-icon-wrap { background: linear-gradient(135deg, #5b21b6 0%, #8b5cf6 100%); }
+    .card-violet .card-icon-wrap { background: linear-gradient(135deg, #5b21b6 0%, #8b5cf6 100%); }
+    .card-amber  .card-icon-wrap { background: linear-gradient(135deg, #92400e 0%, #f59e0b 100%); }
+
+    .card-icon-wrap svg {
+      width: 26px; height: 26px;
+    }
+
+    .card-label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      line-height: 1.3;
+      position: relative;
+      z-index: 1;
+    }
+
+    .scroll-hint {
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.2);
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      animation: nudge 2.4s ease-in-out infinite;
+    }
+
+    .scroll-hint svg { opacity: 0.4; }
+
+    @keyframes nudge {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(8px); }
+    }
+
+    /* ── MAIN ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 16px 90px;
+    }
+
+    section {
+      margin-bottom: 64px;
+      scroll-margin-top: 56px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .section-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-icon svg { width: 18px; height: 18px; }
+
+    .icon-blue   { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .icon-amber  { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .icon-teal   { background: rgba(20,184,166,0.15); color: #2dd4bf; }
+    .icon-violet { background: rgba(139,92,246,0.15); color: #a78bfa; }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    /* ── ANNOUNCEMENTS ── */
+    #announcements {
+      background: rgba(17, 16, 42, 0.65);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 26px 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 36px;
+      margin-bottom: 0;
+      text-align: start;
+    }
+
+    .announcement-card {
+      border-right: 3px solid #3b82f6;
+      background: rgba(255,255,255,0.04);
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .announcement-card:last-child { margin-bottom: 0; }
+    .announcement-card:hover {
+      transform: translateX(-3px);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .announcement-card.important {
+      border-right-color: #ef4444;
+      background: rgba(239,68,68,0.07);
+    }
+
+    .announcement-date {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-bottom: 3px;
+      letter-spacing: 0.3px;
+    }
+
+    .announcement-title {
+      font-weight: 700;
+      font-size: 0.96rem;
+      color: #f1f5f9;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .pin-dot {
+      width: 8px; height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .announcement-body {
+      font-size: 0.87rem;
+      color: #94a3b8;
+      line-height: 1.55;
+      white-space: pre-line;
+    }
+
+    .ann-status {
+      color: #64748b;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .ann-error { color: #ef4444; }
+
+    /* ── QUICK LINKS ── */
+    .quick-links-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .quick-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 12px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      text-decoration: none;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s;
+    }
+
+    .quick-link:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.22);
+      color: #f1f5f9;
+      transform: translateY(-2px);
+    }
+
+    .quick-link img {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 640px) {
+      .quick-links-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .quick-link { padding: 14px 8px 12px; font-size: 0.75rem; }
+      .quick-link img { width: 36px; height: 36px; }
+    }
+
+    /* ── SCHEDULE TABLE ── */
+    .schedule-wrapper { overflow-x: auto; }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+      min-width: 620px;
+      background: rgba(38, 36, 80, 0.82);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.13);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+    }
+
+    .schedule-table th {
+      background: rgba(18, 16, 45, 0.85);
+      color: #cbd5e1;
+      padding: 11px 8px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.92rem;
+      letter-spacing: 0.3px;
+    }
+
+    .schedule-table td {
+      padding: 9px 8px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-right: 1px solid rgba(255,255,255,0.08);
+      color: #e2e8f0;
+    }
+
+    .schedule-table tr:last-child td { border-bottom: none; }
+    .schedule-table tr:hover td { background: rgba(255,255,255,0.06); }
+
+    .period-num { font-weight: 700; color: #60a5fa; font-size: 1.05rem; }
+    .time-cell  { color: #94a3b8; font-size: 0.87rem; white-space: nowrap; }
+
+    .break-row td {
+      background: rgba(255,255,255,0.02);
+      color: #64748b;
+      font-size: 0.87rem;
+      font-style: italic;
+      padding: 5px 8px;
+    }
+
+    .break-row .time-cell { font-style: normal; color: #94a3b8; }
+    .break-row:hover td  { background: rgba(255,255,255,0.02) !important; }
+    .empty-cell          { color: #475569; }
+
+    /* ── TEACHERS ── */
+    .teachers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .teacher-card {
+      background: rgba(17, 16, 42, 0.65);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 20px 18px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .teacher-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    .teacher-card.homeroom {
+      border-color: rgba(251,191,36,0.35);
+      background: rgba(251,191,36,0.06);
+    }
+
+    .teacher-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .teacher-avatar {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: white;
+    }
+
+    .teacher-info { flex: 1; min-width: 0; }
+
+    .teacher-name {
+      font-weight: 700;
+      font-size: 0.97rem;
+      color: #f1f5f9;
+      line-height: 1.3;
+    }
+
+    .teacher-subject {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .homeroom-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fbbf24;
+      background: rgba(251,191,36,0.12);
+      border: 1px solid rgba(251,191,36,0.3);
+      border-radius: 20px;
+      padding: 2px 10px;
+      margin-top: 4px;
+    }
+
+    .teacher-wa {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(37,211,102,0.1);
+      border: 1px solid rgba(37,211,102,0.25);
+      color: #4ade80;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 8px;
+      transition: background 0.2s, border-color 0.2s;
+      font-family: 'Alef', Arial, sans-serif;
+    }
+
+    .teacher-wa:hover {
+      background: rgba(37,211,102,0.18);
+      border-color: rgba(37,211,102,0.45);
+    }
+
+    .teacher-wa svg { flex-shrink: 0; }
+
+    .no-phone {
+      font-size: 0.8rem;
+      color: #475569;
+    }
+
+    /* ── SEATING CHART ── */
+    .classroom {
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .classroom-inner {
+      min-width: 580px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .desk-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    /* Each desk unit = chairs on top + surface below */
+    .desk-unit {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .classroom.visible .desk-unit {
+      animation: deskIn 0.45s ease var(--d, 0s) forwards;
+    }
+
+    @keyframes deskIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Chair circles sitting above the desk */
+    .desk-chairs {
+      display: flex;
+      justify-content: space-around;
+      padding: 0 14px;
+      gap: 6px;
+    }
+
+    .chair-circle {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(96,165,250,0.2);
+      border: 1px solid rgba(96,165,250,0.45);
+      flex-shrink: 0;
+    }
+
+    .desk-unit.lidor-unit .chair-circle {
+      background: rgba(251,191,36,0.12);
+      border-color: rgba(251,191,36,0.3);
+    }
+
+    /* The desk surface */
+    .desk {
+      background: linear-gradient(175deg, rgba(55,52,105,0.98) 0%, rgba(38,35,80,0.95) 100%);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-top: 2px solid rgba(96,165,250,0.6);
+      border-radius: 10px;
+      padding: 12px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+    }
+
+    .desk-unit:hover .desk {
+      border-color: rgba(255,255,255,0.28);
+      border-top-color: rgba(96,165,250,0.9);
+      background: linear-gradient(175deg, rgba(68,65,125,0.98) 0%, rgba(48,45,98,0.95) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.2);
+    }
+
+    .desk-unit:hover .chair-circle {
+      border-color: rgba(96,165,250,0.5);
+      background: rgba(96,165,250,0.2);
+    }
+
+    /* Empty desk */
+    .desk-unit.empty .desk {
+      background: transparent;
+      border: 1px dashed rgba(255,255,255,0.05);
+      border-top: 1px dashed rgba(255,255,255,0.05);
+      box-shadow: none;
+    }
+    .desk-unit.empty .chair-circle {
+      opacity: 0.2;
+    }
+    .desk-unit.empty:hover .desk {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Lidor */
+    .desk-unit.lidor-unit .desk {
+      border-top-color: rgba(251,191,36,0.75);
+      background: linear-gradient(175deg, rgba(70,52,8,0.95) 0%, rgba(45,32,5,0.92) 100%);
+      flex-direction: column;
+      gap: 3px;
+    }
+    .desk-unit.lidor-unit:hover .desk {
+      border-top-color: rgba(251,191,36,0.75);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(251,191,36,0.15);
+    }
+    .desk-unit.lidor-unit:hover .chair-circle {
+      border-color: rgba(251,191,36,0.55);
+      background: rgba(251,191,36,0.2);
+    }
+
+    .lidor-name { font-size: 0.88rem; font-weight: 700; color: #fbbf24; }
+    .lidor-role { font-size: 0.63rem; color: rgba(251,191,36,0.55); letter-spacing: 0.3px; }
+
+    .seat {
+      flex: 1;
+      text-align: center;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      font-weight: 700;
+      padding: 0 6px;
+      line-height: 1.3;
+    }
+
+    .desk-unit:hover .seat { color: #f1f5f9; }
+
+    .desk-unit.double .desk { gap: 22px; }
+
+    .desk-unit.single .desk { }
+
+    /* Row gap to suggest aisles */
+    .desk-row + .desk-row { margin-top: 10px; }
+
+    /* Board & Door */
+    .classroom-footer {
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .seating-loading, .events-loading {
+      text-align: center;
+      color: #64748b;
+      padding: 2rem;
+      font-size: 0.95rem;
+    }
+    .classroom-board {
+      flex: 1;
+      background: linear-gradient(135deg, rgba(15,60,15,0.5), rgba(10,40,10,0.4));
+      border: 1px solid rgba(74,222,128,0.2);
+      border-top: 3px solid rgba(74,222,128,0.35);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #4ade80;
+      font-weight: 700;
+      letter-spacing: 3px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+
+    .classroom-door {
+      background: rgba(255,255,255,0.03);
+      border: 2px dashed rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: 0.78rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 1px;
+    }
+
+    /* ── EVENTS ── */
+    .events-legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      justify-content: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      padding: 4px 11px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      transition: opacity 0.18s, background 0.18s, border-color 0.18s, color 0.18s;
+      user-select: none;
+    }
+    .legend-item:hover { opacity: 0.8; }
+    .legend-item.active {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.22);
+      color: #f1f5f9;
+    }
+    .legend-item.dimmed { opacity: 0.28; }
+
+    .legend-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .event-row.cat-hidden { display: none !important; }
+    .month-group.filter-empty { display: none; }
+
+    #events-list {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .month-group { margin-bottom: 20px; }
+
+    .month-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .event-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      transition: background 0.15s;
+    }
+
+    .event-row:hover { background: rgba(255,255,255,0.06); }
+
+    .event-row.past { display: none; }
+    .month-group.past-group { display: none; }
+    #events-list.show-past .event-row.past { display: flex; opacity: 0.42; }
+    #events-list.show-past .month-group.past-group { display: block; }
+
+    .toggle-past-btn {
+      display: block;
+      margin: 0 auto 18px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #94a3b8;
+      font-family: inherit;
+      font-size: 0.82rem;
+      padding: 5px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .toggle-past-btn:hover {
+      background: rgba(255,255,255,0.13);
+      color: #e2e8f0;
+    }
+
+    .event-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .event-date {
+      font-size: 0.92rem;
+      color: #94a3b8;
+      white-space: nowrap;
+      min-width: 72px;
+      font-weight: 600;
+    }
+
+    .event-title {
+      flex: 1;
+      font-size: 1rem;
+      color: #f1f5f9;
+    }
+
+    .event-time {
+      font-size: 0.85rem;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .event-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .badge-exam    { background: rgba(239,68,68,0.28);   color: #fca5a5; }
+    .badge-quiz    { background: rgba(251,146,60,0.28);  color: #fdba74; }
+    .badge-event   { background: rgba(96,165,250,0.28);  color: #93c5fd; }
+    .badge-holiday { background: rgba(167,139,250,0.28); color: #c4b5fd; }
+    .badge-trip    { background: rgba(52,211,153,0.28);  color: #6ee7b7; }
+
+    .dot-exam    { background: #f87171; }
+    .dot-quiz    { background: #fb923c; }
+    .dot-event   { background: #60a5fa; }
+    .dot-holiday { background: #a78bfa; }
+    .dot-trip    { background: #34d399; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+
+      /* Nav: single scrollable row instead of wrapping */
+      .top-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 8px 12px;
+        gap: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .top-nav::-webkit-scrollbar { display: none; }
+      .top-nav a {
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 0.83rem;
+        padding: 5px 13px;
+      }
+
+      /* Hero: less top padding since nav is now 1 row */
+      .hero {
+        padding: 72px 16px 50px;
+      }
+
+      /* Cards: strict 2×2 grid */
+      .hero-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        width: 100%;
+        max-width: 340px;
+      }
+      .hero-card {
+        width: auto;
+        padding: 22px 12px 18px;
+      }
+
+      /* Announcements: less side margin */
+      #announcements {
+        margin-top: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── STICKY NAV ── -->
+<nav class="top-nav">
+  <a href="#home">ראשי</a>
+  <a href="#announcements">הודעות</a>
+  <a href="#links">קישורים</a>
+  <a href="#schedule">מערכת שעות</a>
+  <a href="#teachers">צוות המורים</a>
+  <a href="#events">מבחנים ואירועים</a>
+  <a href="#seating">מקומות ישיבה</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="home" class="hero">
+  <div class="hero-ring"></div>
+  <div class="hero-ring"></div>
+
+  <div class="hero-content">
+    <img
+      src="https://bengurion-herzliya.mashov.info/wp-content/uploads/sites/225/2024/07/%D7%A9%D7%97%D7%95%D7%A8-lior-burshtein.png"
+      alt="חטיבת הביניים בן גוריון הרצליה"
+      class="school-logo"
+    >
+
+    <h1>כיתה ז׳2</h1>
+    <p class="hero-subtitle">שנת הלימודים תשפ״ו</p>
+
+    <div class="hero-cards">
+
+      <!-- Schedule -->
+      <a href="#schedule" class="hero-card card-blue">
+        <div class="card-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="3"/>
+            <path d="M3 10h18"/>
+            <path d="M8 2v4M16 2v4"/>
+            <rect x="7" y="14" width="3" height="3" rx="0.5" fill="white" stroke="none"/>
+            <rect x="11.5" y="14" width="3" height="3" rx="0.5" fill="white" stroke="none"/>
+          </svg>
+        </div>
+        <span class="card-label">מערכת שעות</span>
+      </a>
+
+      <!-- Teachers -->
+      <a href="#teachers" class="hero-card card-teal">
+        <div class="card-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M2 21c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
+            <circle cx="19" cy="9" r="2.5"/>
+            <path d="M22 21c0-2.5-1.34-4.67-3-5.7"/>
+          </svg>
+        </div>
+        <span class="card-label">צוות המורים</span>
+      </a>
+
+      <!-- Events -->
+      <a href="#events" class="hero-card card-violet">
+        <div class="card-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v4M16 2v4"/>
+            <rect x="3" y="4" width="18" height="18" rx="3"/>
+            <path d="M3 10h18"/>
+            <path d="M8 15l2 2 4-4"/>
+          </svg>
+        </div>
+        <span class="card-label">מבחנים ואירועים</span>
+      </a>
+
+      <!-- Seating -->
+      <a href="#seating" class="hero-card card-amber">
+        <div class="card-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="8" height="6" rx="1.5"/>
+            <rect x="14" y="3" width="8" height="6" rx="1.5"/>
+            <rect x="2" y="15" width="8" height="6" rx="1.5"/>
+            <rect x="14" y="15" width="8" height="6" rx="1.5"/>
+          </svg>
+        </div>
+        <span class="card-label">מקומות ישיבה</span>
+      </a>
+
+    </div>
+
+    <section id="announcements">
+      <div class="section-header">
+        <div class="section-icon icon-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </div>
+        <h2>הודעות המחנך</h2>
+      </div>
+      <div id="announcements-list">
+        <div class="ann-status">טוען הודעות...</div>
+      </div>
+    </section>
+
+    <div class="scroll-hint">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </div>
+</section>
+
+<main>
+
+  <!-- ── QUICK LINKS ── -->
+  <section id="links">
+    <div class="section-header">
+      <div class="section-icon icon-blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+      </div>
+      <h2>קישורים חשובים</h2>
+    </div>
+
+    <div class="quick-links-grid">
+
+      <a href="https://classroom.google.com" target="_blank" rel="noopener" class="quick-link">
+        <img src="https://www.google.com/s2/favicons?domain=classroom.google.com&sz=128" alt="Google Classroom">
+        גוגל קלאסרום
+      </a>
+
+      <a href="https://web.mashov.info/students/main/home" target="_blank" rel="noopener" class="quick-link">
+        <img src="https://www.google.com/s2/favicons?domain=mashov.info&sz=128" alt="משוב תלמידים">
+        משוב תלמידים
+      </a>
+
+      <a href="https://web.mashov.info/parents/main/home" target="_blank" rel="noopener" class="quick-link">
+        <img src="https://www.google.com/s2/favicons?domain=mashov.info&sz=128" alt="משוב הורים">
+        משוב הורים
+      </a>
+
+      <a href="https://students.myofek.cet.ac.il/" target="_blank" rel="noopener" class="quick-link">
+        <img src="https://www.google.com/s2/favicons?domain=myofek.cet.ac.il&sz=128" alt="אופק הילקוט הדיגיטלי">
+        אופק
+      </a>
+
+      <a href="https://pro.galim.org.il" target="_blank" rel="noopener" class="quick-link">
+        <img src="https://www.google.com/s2/favicons?domain=galim.org.il&sz=128" alt="גלים פרו">
+        גלים פרו
+      </a>
+
+      <a href="https://moodle.co.il" target="_blank" rel="noopener" class="quick-link">
+        <img src="https://www.google.com/s2/favicons?domain=moodle.co.il&sz=128" alt="מודל">
+        מודל
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── SCHEDULE ── -->
+  <section id="schedule">
+    <div class="section-header">
+      <div class="section-icon icon-blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="3"/>
+          <path d="M3 10h18M8 2v4M16 2v4"/>
+        </svg>
+      </div>
+      <h2>מערכת שעות</h2>
+    </div>
+    <div class="schedule-wrapper">
+      <table class="schedule-table">
+        <thead>
+          <tr>
+            <th>שיעור</th><th>שעות</th>
+            <th>ראשון</th><th>שני</th><th>שלישי</th><th>רביעי</th><th>חמישי</th><th>שישי</th>
+          </tr>
+        </thead>
+        <tbody id="schedule-tbody">
+          <tr><td colspan="8" class="time-cell" style="padding:1.5rem;text-align:center">טוען מערכת שעות...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── TEACHERS ── -->
+  <section id="teachers">
+    <div class="section-header">
+      <div class="section-icon icon-teal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M2 21c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
+          <circle cx="19" cy="9" r="2.5"/>
+          <path d="M22 21c0-2.5-1.34-4.67-3-5.7"/>
+        </svg>
+      </div>
+      <h2>צוות המורים</h2>
+    </div>
+    <div class="teachers-grid">
+
+      <!-- מחנך הכיתה -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#b45309,#fbbf24)">נ</div>
+          <div class="teacher-info">
+            <div class="teacher-name">ניר עוז-ארי</div>
+            <div class="teacher-subject">אנגלית</div>
+            <div class="homeroom-badge">מחנך הכיתה</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972556649325" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          055-6649325
+        </a>
+      </div>
+
+      <!-- אריאלה נתן -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#b45309,#fbbf24)">א</div>
+          <div class="teacher-info">
+            <div class="teacher-name">אריאלה נתן</div>
+            <div class="teacher-subject">ספרות</div>
+            <div class="homeroom-badge">רכזת השכבה</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972522238082" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          052-2238082
+        </a>
+      </div>
+
+      <!-- נועה דותן -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#0e7490,#22d3ee)">נ</div>
+          <div class="teacher-info">
+            <div class="teacher-name">נועה דותן</div>
+            <div class="teacher-subject">מקרא</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972546466013" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          054-6466013
+        </a>
+      </div>
+
+      <!-- טלי טוויל -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#065f46,#34d399)">ט</div>
+          <div class="teacher-info">
+            <div class="teacher-name">טלי טוויל</div>
+            <div class="teacher-subject">מדעים</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972532343628" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          053-2343628
+        </a>
+      </div>
+
+      <!-- חגית צוקר -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#9d174d,#f472b6)">ח</div>
+          <div class="teacher-info">
+            <div class="teacher-name">חגית צוקר</div>
+            <div class="teacher-subject">מורשת</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972528743644" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          052-8743644
+        </a>
+      </div>
+
+      <!-- ולאא ג'אבר -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#1e3a5f,#3b82f6)">ו</div>
+          <div class="teacher-info">
+            <div class="teacher-name">ולאא ג׳אבר</div>
+            <div class="teacher-subject">ערבית</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972527727819" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          052-7727819
+        </a>
+      </div>
+
+      <!-- רעות בן דוד -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#4a1942,#c084fc)">ר</div>
+          <div class="teacher-info">
+            <div class="teacher-name">רעות בן דוד</div>
+            <div class="teacher-subject">לשון</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972528381226" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          052-8381226
+        </a>
+      </div>
+
+      <!-- שירלי מקובסקי -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#92400e,#fbbf24)">ש</div>
+          <div class="teacher-info">
+            <div class="teacher-name">שירלי מקובסקי</div>
+            <div class="teacher-subject">מתמטיקה</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972523505181" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          052-3505181
+        </a>
+      </div>
+
+      <!-- ירון ארנון -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#1e3a5f,#60a5fa)">י</div>
+          <div class="teacher-info">
+            <div class="teacher-name">ירון ארנון</div>
+            <div class="teacher-subject">חנ״ג · בדמינגטון</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972522754349" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          052-2754349
+        </a>
+      </div>
+
+      <!-- ליאור ברגר -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#134e4a,#2dd4bf)">ל</div>
+          <div class="teacher-info">
+            <div class="teacher-name">ליאור ברגר</div>
+            <div class="teacher-subject">חנ״ג</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972502412737" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          050-2412737
+        </a>
+      </div>
+
+      <!-- אודליה -->
+      <div class="teacher-card">
+        <div class="teacher-top">
+          <div class="teacher-avatar" style="background: linear-gradient(135deg,#7c2d12,#fb923c)">א</div>
+          <div class="teacher-info">
+            <div class="teacher-name">אודליה</div>
+            <div class="teacher-subject">אומנות</div>
+          </div>
+        </div>
+        <a class="teacher-wa" href="https://wa.me/972507384292" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          050-7384292
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── EVENTS ── -->
+  <section id="events">
+    <div class="section-header">
+      <div class="section-icon icon-violet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 2v4M16 2v4"/>
+          <rect x="3" y="4" width="18" height="18" rx="3"/>
+          <path d="M3 10h18M8 15l2 2 4-4"/>
+        </svg>
+      </div>
+      <h2>מבחנים ואירועים</h2>
+    </div>
+
+    <div class="events-legend">
+      <div class="legend-item" data-cats="מבחן"    onclick="filterByCategory(this)"><div class="legend-dot dot-exam"></div> מבחן</div>
+      <div class="legend-item" data-cats="בוחן"    onclick="filterByCategory(this)"><div class="legend-dot dot-quiz"></div> בוחן</div>
+      <div class="legend-item" data-cats="אירוע"   onclick="filterByCategory(this)"><div class="legend-dot dot-event"></div> אירוע</div>
+      <div class="legend-item" data-cats="חג,חופש" onclick="filterByCategory(this)"><div class="legend-dot dot-holiday"></div> חג / חופש</div>
+      <div class="legend-item" data-cats="טיול"    onclick="filterByCategory(this)"><div class="legend-dot dot-trip"></div> טיול</div>
+    </div>
+
+    <button id="toggle-past-btn" class="toggle-past-btn" onclick="togglePastEvents()">הצג אירועים שעברו</button>
+
+    <div id="events-list">
+      <div class="events-loading">טוען אירועים...</div>
+    </div>
+
+  </section>
+
+  <!-- ── SEATING CHART ── -->
+  <section id="seating">
+    <div class="section-header">
+      <div class="section-icon icon-teal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/>
+          <rect x="3" y="11" width="7" height="5" rx="1"/><rect x="14" y="11" width="7" height="5" rx="1"/>
+          <rect x="3" y="19" width="7" height="2" rx="1"/><rect x="14" y="19" width="7" height="2" rx="1"/>
+        </svg>
+      </div>
+      <h2>מקומות ישיבה</h2>
+    </div>
+
+    <div class="classroom">
+      <div class="classroom-inner">
+
+        <div class="seating-loading">טוען מקומות ישיבה...</div>
+
+        <!-- לוח ודלת — דלת בצד ימין -->
+        <div class="classroom-footer">
+          <div class="classroom-door">דלת</div>
+          <div class="classroom-board">לוח</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // ══════════════════════════════════════════════════════
+  //  הגדרת גוגל שיטס להודעות המחנך
+  //
+  //  צעדים:
+  //  1. פתח את גוגל שיטס שלך
+  //  2. הוסף גיליון חדש ושמו: הודעות
+  //  3. עמודות (שורה ראשונה = כותרות):
+  //       A = תאריך  (למשל: 5.3.2026)
+  //       B = כותרת
+  //       C = הודעה
+  //       D = חשוב   (כתוב TRUE להודעה בולטת באדום)
+  //  4. שתף את הקובץ: "כל מי שיש לו קישור — צופה"
+  //  5. העתק את ה-ID מהכתובת (בין /d/ לבין /edit)
+  //     ושים אותו בשורה הבאה:
+  // ══════════════════════════════════════════════════════
+  const SHEET_ID   = '1C3qCuU_SwJvczmGszW52v71aSC6TWtN7xQT1KsOPBlM';
+  const SHEET_NAME = 'הודעות';
+
+  const SEATING_SHEET_ID   = SHEET_ID;
+  const SEATING_SHEET_NAME = 'ישיבה';
+  // ══════════════════════════════════════════════════════
+
+  function loadAnnouncements() {
+    const container = document.getElementById('announcements-list');
+
+    // JSONP callback — Google Sheets calls this with the data
+    window._sheetsCallback = function(response) {
+      try {
+        const rows = response.table?.rows ?? [];
+
+        if (rows.length === 0) {
+          container.innerHTML = '<div class="ann-status">אין הודעות כרגע</div>';
+          return;
+        }
+
+        const items = rows.map(r => ({
+          date:      r.c[0]?.v ?? '',
+          title:     r.c[1]?.v ?? '',
+          body:      r.c[2]?.v ?? '',
+          important: r.c[3]?.v === true || String(r.c[3]?.v ?? '').toUpperCase() === 'TRUE'
+        })).sort((a, b) => b.important - a.important);
+
+        container.innerHTML = items.map(item => `
+          <div class="announcement-card ${item.important ? 'important' : ''}">
+            <div class="announcement-date">${item.date}</div>
+            <div class="announcement-title">
+              ${item.important ? '<span class="pin-dot"></span>' : ''}
+              ${item.title}
+            </div>
+            ${item.body ? `<div class="announcement-body">${item.body}</div>` : ''}
+          </div>`).join('');
+
+      } catch(e) {
+        container.innerHTML = `<div class="ann-status ann-error">שגיאה בעיבוד הנתונים</div>`;
+      }
+    };
+
+    // Inject a <script> tag — bypasses CORS completely
+    const script = document.createElement('script');
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:_sheetsCallback&sheet=${encodeURIComponent(SHEET_NAME)}&headers=1&cb=${Date.now()}`;
+    script.onerror = () => {
+      container.innerHTML = `<div class="ann-status ann-error">לא ניתן לטעון הודעות — בדוק שהגיליון שותף כראוי.</div>`;
+    };
+    document.head.appendChild(script);
+  }
+
+  loadAnnouncements();
+
+  function loadSeating() {
+    window._seatingCallback = function(response) {
+      try {
+        const rows = response.table?.rows ?? [];
+        const inner = document.querySelector('.classroom-inner');
+        const footer = inner.querySelector('.classroom-footer');
+        inner.innerHTML = '';
+
+        let delay = 0.05;
+
+        rows.forEach((row) => {
+          const deskRow = document.createElement('div');
+          deskRow.className = 'desk-row';
+
+          const cells = row.c || [];
+          for (let i = 0; i < cells.length; i += 2) {
+            const v1 = (cells[i]?.v ?? '').toString().trim();
+            const v2 = (cells[i + 1]?.v ?? '').toString().trim();
+            const isLidor = v1 === 'לידור';
+            const isEmpty  = !v1 && !v2;
+            const isDouble = !isLidor && Boolean(v1) && Boolean(v2);
+
+            const unit = document.createElement('div');
+            unit.className = 'desk-unit';
+            unit.style.setProperty('--d', `${delay}s`);
+            delay += 0.05;
+
+            if (isLidor) unit.classList.add('lidor-unit');
+            if (isEmpty)  unit.classList.add('empty');
+            if (isDouble) unit.classList.add('double');
+            if (!isDouble && !isLidor && !isEmpty) unit.classList.add('single');
+
+            const chairs = document.createElement('div');
+            chairs.className = 'desk-chairs';
+            const numChairs = isDouble ? 2 : 1;
+            for (let j = 0; j < numChairs; j++) {
+              const chair = document.createElement('div');
+              chair.className = 'chair-circle';
+              chairs.appendChild(chair);
+            }
+
+            const desk = document.createElement('div');
+            desk.className = 'desk';
+
+            if (isLidor) {
+              desk.innerHTML = '<span class="lidor-name">לידור</span><span class="lidor-role">תומכת למידה</span>';
+            } else if (isDouble) {
+              desk.innerHTML = `<span class="seat">${v1}</span><span class="seat">${v2}</span>`;
+            } else if (!isEmpty) {
+              desk.innerHTML = `<span class="seat">${v1}</span>`;
+            }
+
+            unit.appendChild(chairs);
+            unit.appendChild(desk);
+            deskRow.appendChild(unit);
+          }
+
+          inner.appendChild(deskRow);
+        });
+
+        inner.appendChild(footer);
+
+        // Set up scroll animation now that desks are in the DOM
+        const classroom = document.querySelector('.classroom');
+        const seatingObserver = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            classroom.classList.add('visible');
+            seatingObserver.disconnect();
+          }
+        }, { threshold: 0.05 });
+        seatingObserver.observe(classroom);
+
+      } catch(e) {
+        const el = document.querySelector('.seating-loading');
+        if (el) el.textContent = 'שגיאה בטעינת מקומות ישיבה';
+      }
+    };
+
+    const script = document.createElement('script');
+    script.src = `https://docs.google.com/spreadsheets/d/${SEATING_SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:_seatingCallback&sheet=${encodeURIComponent(SEATING_SHEET_NAME)}&headers=0&cb=${Date.now()}`;
+    script.onerror = () => {
+      const el = document.querySelector('.seating-loading');
+      if (el) el.textContent = 'לא ניתן לטעון מקומות ישיבה — בדוק שהגיליון שותף כראוי.';
+    };
+    document.head.appendChild(script);
+  }
+
+  loadSeating();
+
+  const EVENTS_SHEET_NAME = 'אירועים';
+  const MONTH_NAMES = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  const CATEGORY_MAP = {
+    'מבחן':  { dot: 'dot-exam',    badge: 'badge-exam',    label: 'מבחן' },
+    'בוחן':  { dot: 'dot-quiz',    badge: 'badge-quiz',    label: 'בוחן' },
+    'אירוע': { dot: 'dot-event',   badge: 'badge-event',   label: 'אירוע' },
+    'חג':    { dot: 'dot-holiday', badge: 'badge-holiday', label: 'חג' },
+    'חופש':  { dot: 'dot-holiday', badge: 'badge-holiday', label: 'חופש' },
+    'טיול':  { dot: 'dot-trip',    badge: 'badge-trip',    label: 'טיול' },
+  };
+
+  function loadEvents() {
+    window._eventsCallback = function(response) {
+      const container = document.getElementById('events-list');
+      try {
+        const rows = response.table?.rows ?? [];
+        if (rows.length === 0) {
+          container.innerHTML = '<div class="events-loading">אין אירועים</div>';
+          return;
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const parseEventDate = (cell) => {
+          const tryStr = (raw) => {
+            const s = (raw ?? '').toString().trim();
+            if (!s) return new Date(NaN);
+            // Google Sheets native date: "Date(YYYY,M,D)" — month is 0-indexed
+            const m = s.match(/^Date\((\d+),(\d+),(\d+)\)$/);
+            if (m) return new Date(+m[1], +m[2], +m[3]);
+            // DD/MM/YYYY or DD/M/YYYY (slashes)
+            const sl = s.split('/');
+            if (sl.length === 3) return new Date(+sl[2], +sl[1] - 1, +sl[0]);
+            // D.M.YYYY or DD.MM.YYYY (dots)
+            const p = s.split('.');
+            if (p.length === 3) return new Date(+p[2], +p[1] - 1, +p[0]);
+            return new Date(NaN);
+          };
+          // Try raw value first; if that fails, try the formatted display string (f)
+          const fromV = tryStr(cell?.v);
+          return isNaN(fromV) ? tryStr(cell?.f) : fromV;
+        };
+
+        const formatRange = (start, end) => {
+          const d1 = start.getDate(), m1 = start.getMonth() + 1;
+          if (!end || isNaN(end.getTime())) return `${d1}.${m1}`;
+          const d2 = end.getDate(), m2 = end.getMonth() + 1;
+          return m1 === m2 ? `${d1}–${d2}.${m1}` : `${d1}.${m1}–${d2}.${m2}`;
+        };
+
+        const events = rows.map(r => {
+          const date    = parseEventDate(r.c[0]);
+          const title   = (r.c[1]?.v ?? '').toString().trim();
+          const time    = (r.c[2]?.v ?? '').toString().trim();
+          const cat     = (r.c[3]?.v ?? '').toString().trim();
+          const endDate = parseEventDate(r.c[4]);
+          const display = formatRange(date, endDate);
+          const sortEnd = (!isNaN(endDate?.getTime())) ? endDate : date;
+          return { date, endDate, sortEnd, display, title, time, cat };
+        }).filter(e => e.title && !isNaN(e.date.getTime()))
+          .sort((a, b) => a.date - b.date);
+
+        const groups = {};
+        const groupOrder = [];
+        events.forEach(e => {
+          const key = `${e.date.getFullYear()}-${e.date.getMonth()}`;
+          if (!groups[key]) {
+            groups[key] = { label: `${MONTH_NAMES[e.date.getMonth()]} ${e.date.getFullYear()}`, events: [] };
+            groupOrder.push(key);
+          }
+          groups[key].events.push(e);
+        });
+
+        container.innerHTML = groupOrder.map(key => {
+          const g = groups[key];
+          const allPast = g.events.every(e => e.sortEnd < today);
+          const rows = g.events.map(e => {
+            const cat = CATEGORY_MAP[e.cat] || { dot: 'dot-event', badge: 'badge-event', label: e.cat };
+            const past = e.sortEnd < today ? ' past' : '';
+            return `<div class="event-row${past}" data-cat="${e.cat}">
+              <div class="event-dot ${cat.dot}"></div>
+              <div class="event-date">${e.display}</div>
+              <div class="event-title">${e.title}</div>
+              <div class="event-time">${e.time}</div>
+              <div class="event-badge ${cat.badge}">${cat.label}</div>
+            </div>`;
+          }).join('');
+          const groupClass = allPast ? 'month-group past-group' : 'month-group';
+          return `<div class="${groupClass}"><div class="month-label">${g.label}</div>${rows}</div>`;
+        }).join('');
+
+      } catch(err) {
+        container.innerHTML = '<div class="events-loading">שגיאה בטעינת האירועים</div>';
+      }
+    };
+
+    const script = document.createElement('script');
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:_eventsCallback&sheet=${encodeURIComponent(EVENTS_SHEET_NAME)}&headers=1&cb=${Date.now()}`;
+    script.onerror = () => {
+      document.getElementById('events-list').innerHTML = '<div class="events-loading">לא ניתן לטעון אירועים</div>';
+    };
+    document.head.appendChild(script);
+  }
+
+  loadEvents();
+
+  function togglePastEvents() {
+    const list = document.getElementById('events-list');
+    const btn  = document.getElementById('toggle-past-btn');
+    const showing = list.classList.toggle('show-past');
+    btn.textContent = showing ? 'הסתר אירועים שעברו' : 'הצג אירועים שעברו';
+  }
+
+  let _activeFilter = null;
+
+  function filterByCategory(el) {
+    const cats = el.dataset.cats.split(',');
+    const legendItems  = document.querySelectorAll('.legend-item[data-cats]');
+    const eventRows    = document.querySelectorAll('.event-row');
+    const monthGroups  = document.querySelectorAll('.month-group');
+
+    // Clicking the active filter → reset
+    if (_activeFilter === el.dataset.cats) {
+      _activeFilter = null;
+      legendItems.forEach(li => li.classList.remove('active', 'dimmed'));
+      eventRows.forEach(r  => r.classList.remove('cat-hidden'));
+      monthGroups.forEach(g => g.classList.remove('filter-empty'));
+      return;
+    }
+
+    // Activate filter
+    _activeFilter = el.dataset.cats;
+    legendItems.forEach(li => {
+      li.classList.remove('active', 'dimmed');
+      li === el ? li.classList.add('active') : li.classList.add('dimmed');
+    });
+    eventRows.forEach(r => {
+      r.classList.toggle('cat-hidden', !cats.includes(r.dataset.cat));
+    });
+    // Hide month groups whose visible rows are all hidden
+    monthGroups.forEach(g => {
+      const visible = g.querySelectorAll('.event-row:not(.cat-hidden)').length;
+      g.classList.toggle('filter-empty', visible === 0);
+    });
+  }
+
+  function loadSchedule() {
+    window._scheduleCallback = function(response) {
+      const tbody = document.getElementById('schedule-tbody');
+      try {
+        const rows = response.table?.rows ?? [];
+        if (rows.length === 0) { tbody.innerHTML = ''; return; }
+
+        tbody.innerHTML = rows.map(r => {
+          const get = i => (r.c[i]?.v ?? '').toString().trim();
+          const period = get(0), time = get(1), type = get(8);
+          const days = [2,3,4,5,6,7].map(i => get(i));
+
+          if (type === 'הפסקה') {
+            return `<tr class="break-row">
+              <td></td><td class="time-cell">${time}</td>
+              <td colspan="6">${days[0]}</td>
+            </tr>`;
+          }
+          const dayCells = days.map(d =>
+            d ? `<td>${d}</td>` : `<td class="empty-cell">—</td>`
+          ).join('');
+          return `<tr>
+            <td class="period-num">${period}</td>
+            <td class="time-cell">${time}</td>
+            ${dayCells}
+          </tr>`;
+        }).join('');
+      } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="8" class="time-cell" style="padding:1.5rem;text-align:center">שגיאה בטעינת המערכת</td></tr>';
+      }
+    };
+    const script = document.createElement('script');
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:_scheduleCallback&sheet=${encodeURIComponent('מערכת שעות')}&headers=1&cb=${Date.now()}`;
+    document.head.appendChild(script);
+  }
+
+  loadSchedule();
+</script>
+
+</body>
+</html>
