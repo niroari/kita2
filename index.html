@@ -804,6 +804,43 @@
       color: #e2e8f0;
     }
 
+    #month-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 680px;
+      margin: 0 auto 16px;
+      direction: ltr;
+    }
+    #month-nav-label {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      direction: rtl;
+    }
+    .month-nav-btn {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      color: #cbd5e1;
+      border-radius: 8px;
+      width: 36px; height: 36px;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .month-nav-btn:hover:not(:disabled) {
+      background: rgba(255,255,255,0.14);
+      color: #f1f5f9;
+    }
+    .month-nav-btn:disabled {
+      opacity: 0.22;
+      cursor: default;
+    }
+
     .event-dot {
       width: 9px; height: 9px;
       border-radius: 50%;
@@ -1285,6 +1322,12 @@
 
     <button id="toggle-past-btn" class="toggle-past-btn" onclick="togglePastEvents()">הצג אירועים שעברו</button>
 
+    <div id="month-nav" style="display:none">
+      <button class="month-nav-btn" id="month-prev" onclick="changeMonth(-1)">‹</button>
+      <span id="month-nav-label"></span>
+      <button class="month-nav-btn" id="month-next" onclick="changeMonth(1)">›</button>
+    </div>
+
     <div id="events-list">
       <div class="events-loading">טוען אירועים...</div>
     </div>
@@ -1553,23 +1596,18 @@
           groups[key].events.push(e);
         });
 
-        container.innerHTML = groupOrder.map(key => {
+        _monthGroups = groupOrder.map(key => {
           const g = groups[key];
           const allPast = g.events.every(e => e.sortEnd < today);
-          const rows = g.events.map(e => {
-            const cat = CATEGORY_MAP[e.cat] || { dot: 'dot-event', badge: 'badge-event', label: e.cat };
-            const past = e.sortEnd < today ? ' past' : '';
-            return `<div class="event-row${past}" data-cat="${e.cat}">
-              <div class="event-dot ${cat.dot}"></div>
-              <div class="event-date">${e.display}</div>
-              <div class="event-title">${e.title}</div>
-              <div class="event-time">${e.time}</div>
-              <div class="event-badge ${cat.badge}">${cat.label}</div>
-            </div>`;
-          }).join('');
-          const groupClass = allPast ? 'month-group past-group' : 'month-group';
-          return `<div class="${groupClass}"><div class="month-label">${g.label}</div>${rows}</div>`;
-        }).join('');
+          return { label: g.label, events: g.events, allPast };
+        });
+
+        // Start at the first month that has upcoming events (or last month if all past)
+        const firstNonPast = _monthGroups.findIndex(g => !g.allPast);
+        _monthIdx = firstNonPast >= 0 ? firstNonPast : _monthGroups.length - 1;
+
+        document.getElementById('month-nav').style.display = 'flex';
+        renderCurrentMonth();
 
       } catch(err) {
         container.innerHTML = '<div class="events-loading">שגיאה בטעינת האירועים</div>';
@@ -1586,44 +1624,69 @@
 
   loadEvents();
 
-  function togglePastEvents() {
-    const list = document.getElementById('events-list');
-    const btn  = document.getElementById('toggle-past-btn');
-    const showing = list.classList.toggle('show-past');
-    btn.textContent = showing ? 'הסתר אירועים שעברו' : 'הצג אירועים שעברו';
+  function renderCurrentMonth() {
+    const container = document.getElementById('events-list');
+    if (!_monthGroups.length) return;
+    const g = _monthGroups[_monthIdx];
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const activeCats = _activeFilter ? _activeFilter.split(',') : null;
+
+    const html = g.events.map(e => {
+      const cat = CATEGORY_MAP[e.cat] || { dot: 'dot-event', badge: 'badge-event', label: e.cat };
+      const past = e.sortEnd < today ? ' past' : '';
+      const catHidden = activeCats && !activeCats.includes(e.cat) ? ' cat-hidden' : '';
+      return `<div class="event-row${past}${catHidden}" data-cat="${e.cat}">
+        <div class="event-dot ${cat.dot}"></div>
+        <div class="event-date">${e.display}</div>
+        <div class="event-title">${e.title}</div>
+        <div class="event-time">${e.time}</div>
+        <div class="event-badge ${cat.badge}">${cat.label}</div>
+      </div>`;
+    }).join('');
+
+    container.innerHTML = html || '<div class="events-loading">אין אירועים לחודש זה</div>';
+    // Auto-show past if the whole month is past; otherwise respect the toggle
+    container.classList.toggle('show-past', _showPast || g.allPast);
+
+    // Update navigator
+    document.getElementById('month-nav-label').textContent = g.label;
+    document.getElementById('month-prev').disabled = _monthIdx === 0;
+    document.getElementById('month-next').disabled = _monthIdx === _monthGroups.length - 1;
   }
 
+  function changeMonth(dir) {
+    const newIdx = _monthIdx + dir;
+    if (newIdx < 0 || newIdx >= _monthGroups.length) return;
+    _monthIdx = newIdx;
+    renderCurrentMonth();
+  }
+
+  function togglePastEvents() {
+    _showPast = !_showPast;
+    const btn = document.getElementById('toggle-past-btn');
+    btn.textContent = _showPast ? 'הסתר אירועים שעברו' : 'הצג אירועים שעברו';
+    renderCurrentMonth();
+  }
+
+  let _monthGroups = [];
+  let _monthIdx = 0;
+  let _showPast = false;
   let _activeFilter = null;
 
   function filterByCategory(el) {
-    const cats = el.dataset.cats.split(',');
-    const legendItems  = document.querySelectorAll('.legend-item[data-cats]');
-    const eventRows    = document.querySelectorAll('.event-row');
-    const monthGroups  = document.querySelectorAll('.month-group');
-
+    const legendItems = document.querySelectorAll('.legend-item[data-cats]');
     // Clicking the active filter → reset
     if (_activeFilter === el.dataset.cats) {
       _activeFilter = null;
       legendItems.forEach(li => li.classList.remove('active', 'dimmed'));
-      eventRows.forEach(r  => r.classList.remove('cat-hidden'));
-      monthGroups.forEach(g => g.classList.remove('filter-empty'));
-      return;
+    } else {
+      _activeFilter = el.dataset.cats;
+      legendItems.forEach(li => {
+        li.classList.remove('active', 'dimmed');
+        li === el ? li.classList.add('active') : li.classList.add('dimmed');
+      });
     }
-
-    // Activate filter
-    _activeFilter = el.dataset.cats;
-    legendItems.forEach(li => {
-      li.classList.remove('active', 'dimmed');
-      li === el ? li.classList.add('active') : li.classList.add('dimmed');
-    });
-    eventRows.forEach(r => {
-      r.classList.toggle('cat-hidden', !cats.includes(r.dataset.cat));
-    });
-    // Hide month groups whose visible rows are all hidden
-    monthGroups.forEach(g => {
-      const visible = g.querySelectorAll('.event-row:not(.cat-hidden)').length;
-      g.classList.toggle('filter-empty', visible === 0);
-    });
+    renderCurrentMonth();
   }
 
   function loadSchedule() {
