@@ -372,6 +372,27 @@
 
     .quick-link img.img-white { filter: brightness(0) invert(1); }
 
+    .quick-link-featured {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: center;
+      gap: 16px;
+      background: linear-gradient(135deg, rgba(109,40,217,0.13), rgba(37,99,235,0.13));
+      border-color: rgba(139,92,246,0.3);
+      padding: 18px 28px;
+      font-size: 1rem;
+      color: #c4b5fd;
+    }
+    .quick-link-featured:hover {
+      background: linear-gradient(135deg, rgba(109,40,217,0.24), rgba(37,99,235,0.24));
+      border-color: rgba(139,92,246,0.55);
+      color: #ddd6fe;
+    }
+    .quick-link-featured img {
+      width: 34px;
+      height: 34px;
+    }
+
     @media (max-width: 640px) {
       .quick-links-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
       .quick-link { padding: 12px 6px 10px; font-size: 0.7rem; }
@@ -1266,6 +1287,12 @@
       <a href="https://bengurion-herzliya.mashov.info/" target="_blank" rel="noopener" class="quick-link">
         <img src="https://www.google.com/s2/favicons?domain=bengurion-herzliya.mashov.info&sz=128" alt="אתר בית הספר" class="img-white">
         אתר בית הספר
+      </a>
+
+      <a href="https://notebooklm.google.com/notebook/5e283b47-066d-4c88-abdb-16f49da9c3c6" target="_blank" rel="noopener" class="quick-link quick-link-featured">
+        <img src="https://www.google.com/s2/favicons?domain=notebooklm.google.com&sz=128" alt="NotebookLM">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.7;flex-shrink:0"><path d="M12 1 9.5 8.5 2 9.27l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7 5.46-4.73-7.5-.77Z"/></svg>
+        שאל את התקנון
       </a>
 
     </div>
