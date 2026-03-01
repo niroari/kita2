@@ -220,6 +220,58 @@
     section {
       margin-bottom: 64px;
       scroll-margin-top: 56px;
+      position: relative;
+      isolation: isolate;
+    }
+
+    /* ── SECTION BACKGROUND GLOWS ── */
+    section::before, section::after {
+      content: '';
+      position: absolute;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Schedule — blue glow top-right */
+    #schedule::before {
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.09) 0%, transparent 65%);
+      top: -80px; right: -160px;
+    }
+
+    /* Events — violet from bottom-left, teal echo top-right */
+    #events::before {
+      width: 580px; height: 380px;
+      background: radial-gradient(ellipse, rgba(139,92,246,0.11) 0%, transparent 65%);
+      bottom: -40px; left: -180px;
+    }
+    #events::after {
+      width: 280px; height: 280px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(20,184,166,0.08) 0%, transparent 65%);
+      top: 10px; right: -60px;
+    }
+
+    /* Seating — teal, centred right (picks up the echo from events) */
+    #seating::before {
+      width: 460px; height: 460px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(20,184,166,0.1) 0%, transparent 65%);
+      top: 50%; right: -150px;
+      transform: translateY(-50%);
+    }
+
+    /* Teachers — amber warmth, top-left */
+    #teachers::before {
+      width: 520px; height: 320px;
+      background: radial-gradient(ellipse, rgba(245,158,11,0.08) 0%, transparent 65%);
+      top: -30px; left: -130px;
+    }
+
+    /* Links — indigo sweep, bottom-centre (wraps back to hero purple) */
+    #links::before {
+      width: 680px; height: 320px;
+      background: radial-gradient(ellipse, rgba(99,102,241,0.1) 0%, transparent 65%);
+      bottom: -60px; left: 50%;
+      transform: translateX(-50%);
     }
 
     .section-header {
