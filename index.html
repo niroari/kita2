@@ -455,11 +455,37 @@
       flex-direction: column;
       gap: 12px;
       transition: transform 0.2s, border-color 0.2s;
+      cursor: pointer;
+      user-select: none;
     }
 
     .teacher-card:hover {
       transform: translateY(-3px);
       border-color: rgba(255,255,255,0.15);
+    }
+
+    .teacher-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.28s ease, opacity 0.22s ease;
+    }
+    .teacher-card.open .teacher-contact {
+      max-height: 120px;
+      opacity: 1;
+    }
+
+    .teacher-chevron {
+      color: #475569;
+      flex-shrink: 0;
+      transition: transform 0.28s ease, color 0.2s;
+    }
+    .teacher-card.open .teacher-chevron {
+      transform: rotate(180deg);
+      color: #94a3b8;
     }
 
     .teacher-card.homeroom {
@@ -1544,6 +1570,12 @@
     renderCurrentMonth();
   }
 
+  function toggleTeacher(card) {
+    const wasOpen = card.classList.contains('open');
+    document.querySelectorAll('.teacher-card.open').forEach(c => c.classList.remove('open'));
+    if (!wasOpen) card.classList.add('open');
+  }
+
   function togglePastEvents() {
     _showPast = !_showPast;
     const btn = document.getElementById('toggle-past-btn');
@@ -1617,7 +1649,12 @@
             emailHtml = `<a class="teacher-email" href="mailto:${email}">${MAIL_SVG} ${email}</a>`;
           }
 
-          return `<div class="teacher-card">
+          const hasContact = !!(phone || email);
+          const chevronSvg = hasContact
+            ? `<svg class="teacher-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`
+            : '';
+
+          return `<div class="teacher-card"${hasContact ? ' onclick="toggleTeacher(this)"' : ''} style="${hasContact ? '' : 'cursor:default'}">
             <div class="teacher-top">
               <div class="teacher-avatar" style="background:${color}">${name.charAt(0)}</div>
               <div class="teacher-info">
@@ -1625,9 +1662,9 @@
                 <div class="teacher-subject">${subject}</div>
                 ${badgeHtml}
               </div>
+              ${chevronSvg}
             </div>
-            ${waHtml}
-            ${emailHtml}
+            ${hasContact ? `<div class="teacher-contact" onclick="event.stopPropagation()">${waHtml}${emailHtml}</div>` : ''}
           </div>`;
         }).join('');
       } catch(e) {
