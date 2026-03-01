@@ -333,9 +333,9 @@
     /* ── QUICK LINKS ── */
     .quick-links-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 14px;
-      max-width: 640px;
+      max-width: 740px;
       margin: 0 auto;
     }
 
@@ -370,9 +370,17 @@
       object-fit: contain;
     }
 
+    .quick-link img.img-white { filter: brightness(0) invert(1); }
+
     @media (max-width: 640px) {
-      .quick-links-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-      .quick-link { padding: 14px 8px 12px; font-size: 0.75rem; }
+      .quick-links-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .quick-link { padding: 12px 6px 10px; font-size: 0.7rem; }
+      .quick-link img { width: 32px; height: 32px; }
+    }
+
+    @media (max-width: 440px) {
+      .quick-links-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .quick-link { padding: 14px 10px 12px; font-size: 0.78rem; }
       .quick-link img { width: 36px; height: 36px; }
     }
 
@@ -1225,12 +1233,12 @@
       </a>
 
       <a href="https://bengurion-herzliya.mashov.info/wp-content/uploads/sites/225/2024/07/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F-%D7%91%D7%99%D7%AA-%D7%94%D7%A1%D7%A4%D7%A8.pdf-6.pdf" target="_blank" rel="noopener" class="quick-link">
-        <img src="https://www.google.com/s2/favicons?domain=bengurion-herzliya.mashov.info&sz=128" alt="תקנון בית הספר">
+        <img src="https://www.google.com/s2/favicons?domain=bengurion-herzliya.mashov.info&sz=128" alt="תקנון בית הספר" class="img-white">
         תקנון בית הספר
       </a>
 
       <a href="https://bengurion-herzliya.mashov.info/" target="_blank" rel="noopener" class="quick-link">
-        <img src="https://www.google.com/s2/favicons?domain=bengurion-herzliya.mashov.info&sz=128" alt="אתר בית הספר">
+        <img src="https://www.google.com/s2/favicons?domain=bengurion-herzliya.mashov.info&sz=128" alt="אתר בית הספר" class="img-white">
         אתר בית הספר
       </a>
 
