@@ -694,6 +694,55 @@
       color: #475569;
     }
 
+    .school-contact-card {
+      background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(99,102,241,0.08));
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      flex-wrap: wrap;
+    }
+
+    .school-contact-icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1d4ed8, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .school-contact-icon svg { width: 22px; height: 22px; }
+
+    .school-contact-info {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .school-contact-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #f1f5f9;
+    }
+
+    .school-contact-sub {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .school-contact-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     /* ── SEATING CHART ── */
     .classroom {
       overflow-x: auto;
@@ -1340,6 +1389,31 @@
       <h2>צוות המורים</h2>
     </div>
     <p class="teachers-subtitle">מורים שמספרם מופיע ניתן לפנות בטלפון או בוואטסאפ. לשאר המורים — במייל או דרך המשוב.</p>
+
+    <div class="school-contact-card">
+      <div class="school-contact-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 21V9l9-6 9 6v12"/>
+          <path d="M9 21v-6h6v6"/>
+          <path d="M3 9h18"/>
+        </svg>
+      </div>
+      <div class="school-contact-info">
+        <div class="school-contact-name">חטיבת בן גוריון</div>
+        <div class="school-contact-sub">הרצליה</div>
+      </div>
+      <div class="school-contact-links">
+        <a class="teacher-wa" href="https://wa.me/97299564059" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.555 4.126 1.526 5.858L.057 23.886c-.066.263.029.538.235.704.14.112.31.167.48.167.075 0 .15-.009.223-.029l6.204-1.63A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0"/></svg>
+          09-9564059
+        </a>
+        <a class="teacher-email" href="mailto:ben.gurion@hrzedu.org.il">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          ben.gurion@hrzedu.org.il
+        </a>
+      </div>
+    </div>
+
     <div class="teachers-grid" id="teachers-grid">
       <div class="events-loading">טוען צוות מורים...</div>
     </div>
