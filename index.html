@@ -1057,6 +1057,42 @@
       .hero-cards {
         gap: 6px;
       }
+
+      /* Prevent horizontal scroll that shifts RTL content */
+      body { overflow-x: hidden; }
+
+      /* Schedule: sticky period + time columns while scrolling sideways */
+      .schedule-table {
+        overflow: visible; /* must be visible for position:sticky to work inside */
+      }
+      .schedule-table th:first-child,
+      .schedule-table td:first-child {
+        position: sticky;
+        right: 0;
+        z-index: 2;
+        background: rgba(18, 16, 45, 0.98);
+      }
+      .schedule-table td:first-child {
+        background: rgba(38, 36, 80, 0.98);
+      }
+      .schedule-table th:nth-child(2),
+      .schedule-table td:nth-child(2) {
+        position: sticky;
+        right: 44px; /* width of the first column */
+        z-index: 2;
+        background: rgba(18, 16, 45, 0.98);
+      }
+      .schedule-table td:nth-child(2) {
+        background: rgba(38, 36, 80, 0.98);
+      }
+      .break-row td:first-child,
+      .break-row td:nth-child(2) {
+        background: rgba(26, 24, 56, 0.98);
+      }
+      .schedule-table tr:hover td:first-child,
+      .schedule-table tr:hover td:nth-child(2) {
+        background: rgba(60, 58, 100, 0.98);
+      }
     }
   </style>
 </head>
