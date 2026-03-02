@@ -1266,9 +1266,9 @@
     <button id="toggle-past-btn" class="toggle-past-btn" onclick="togglePastEvents()">הצג אירועים שעברו</button>
 
     <div id="month-nav" style="display:none">
-      <button class="month-nav-btn" id="month-prev" onclick="changeMonth(-1)">‹</button>
+      <button class="month-nav-btn" id="month-prev" onclick="changeMonth(1)">‹</button>
       <span id="month-nav-label"></span>
-      <button class="month-nav-btn" id="month-next" onclick="changeMonth(1)">›</button>
+      <button class="month-nav-btn" id="month-next" onclick="changeMonth(-1)">›</button>
     </div>
 
     <div id="events-list">
@@ -1675,8 +1675,8 @@
 
     // Update navigator
     document.getElementById('month-nav-label').textContent = g.label;
-    document.getElementById('month-prev').disabled = _monthIdx === 0;
-    document.getElementById('month-next').disabled = _monthIdx === _monthGroups.length - 1;
+    document.getElementById('month-prev').disabled = _monthIdx === _monthGroups.length - 1;
+    document.getElementById('month-next').disabled = _monthIdx === 0;
   }
 
   function changeMonth(dir) {
