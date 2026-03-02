@@ -661,6 +661,26 @@
     }
     .teacher-email svg { flex-shrink: 0; }
 
+    .teacher-mashov {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(148,163,184,0.08);
+      border: 1px solid rgba(148,163,184,0.2);
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 7px 12px;
+      border-radius: 8px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .teacher-mashov:hover {
+      background: rgba(148,163,184,0.15);
+      border-color: rgba(148,163,184,0.35);
+      color: #cbd5e1;
+    }
+
     .teachers-subtitle {
       text-align: center;
       color: #64748b;
@@ -1767,11 +1787,12 @@
           }
 
           const hasContact = !!(phone || email);
-          const chevronSvg = hasContact
-            ? `<svg class="teacher-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`
-            : '';
+          const chevronSvg = `<svg class="teacher-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
+          const contactContent = hasContact
+            ? `${waHtml}${emailHtml}`
+            : `<a class="teacher-mashov" href="https://web.mashov.info/parents/main/home" target="_blank">פנייה דרך המשוב</a>`;
 
-          return `<div class="teacher-card"${hasContact ? ' onclick="toggleTeacher(this)"' : ''} style="${hasContact ? '' : 'cursor:default'}">
+          return `<div class="teacher-card" onclick="toggleTeacher(this)">
             <div class="teacher-top">
               <div class="teacher-avatar" style="background:${color}">${name.charAt(0)}</div>
               <div class="teacher-info">
@@ -1781,7 +1802,7 @@
               </div>
               ${chevronSvg}
             </div>
-            ${hasContact ? `<div class="teacher-contact" onclick="event.stopPropagation()">${waHtml}${emailHtml}</div>` : ''}
+            <div class="teacher-contact" onclick="event.stopPropagation()">${contactContent}</div>
           </div>`;
         }).join('');
       } catch(e) {
