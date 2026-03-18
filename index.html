@@ -1525,45 +1525,28 @@
   function loadAnnouncements() {
     const container = document.getElementById('announcements-list');
 
-    // JSONP callback — Google Sheets calls this with the data
-    window._sheetsCallback = function(response) {
-      try {
-        const rows = response.table?.rows ?? [];
+    db.collection('announcements').orderBy('order').get().then(snapshot => {
+      const items = snapshot.docs.map(d => d.data())
+        .sort((a, b) => b.important - a.important);
 
-        if (rows.length === 0) {
-          container.innerHTML = '<div class="ann-status">אין הודעות כרגע</div>';
-          return;
-        }
-
-        const items = rows.map(r => ({
-          date:      r.c[0]?.v ?? '',
-          title:     r.c[1]?.v ?? '',
-          body:      r.c[2]?.v ?? '',
-          important: r.c[3]?.v === true || String(r.c[3]?.v ?? '').toUpperCase() === 'TRUE'
-        })).sort((a, b) => b.important - a.important);
-
-        container.innerHTML = items.map(item => `
-          <div class="announcement-card ${item.important ? 'important' : ''}">
-            <div class="announcement-date">${item.date}</div>
-            <div class="announcement-title">
-              ${item.important ? '<span class="pin-dot"></span>' : ''}
-              ${item.title}
-            </div>
-            ${item.body ? `<div class="announcement-body">${item.body}</div>` : ''}
-          </div>`).join('');
-
-      } catch(e) {
-        container.innerHTML = `<div class="ann-status ann-error">שגיאה בעיבוד הנתונים</div>`;
+      if (items.length === 0) {
+        container.innerHTML = '<div class="ann-status">אין הודעות כרגע</div>';
+        return;
       }
-    };
 
-    // Inject a <script> tag — bypasses CORS completely
-    const script = document.createElement('script');
-    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:_sheetsCallback&sheet=${encodeURIComponent(SHEET_NAME)}&headers=1&cb=${Date.now()}`;
-    script.onerror = () => {
-      container.innerHTML = `<div class="ann-status ann-error">לא ניתן לטעון הודעות — בדוק שהגיליון שותף כראוי.</div>`;
-    };
-    document.head.appendChild(script);
+      container.innerHTML = items.map(item => `
+        <div class="announcement-card ${item.important ? 'important' : ''}">
+          <div class="announcement-date">${item.date}</div>
+          <div class="announcement-title">
+            ${item.important ? '<span class="pin-dot"></span>' : ''}
+            ${item.title}
+          </div>
+          ${item.body ? `<div class="announcement-body">${item.body}</div>` : ''}
+        </div>`).join('');
+
+    }).catch(() => {
+      container.innerHTML = `<div class="ann-status ann-error">שגיאה בטעינת הודעות</div>`;
+    });
   }
 
   loadAnnouncements();
