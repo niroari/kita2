@@ -25,10 +25,23 @@ Static HTML file — no server, no framework. Data comes from Firebase Firestore
 
 ## Admin Panel
 - **URL:** `kita2.vercel.app/admin.html`
-- Login with email + password (Firebase Authentication)
-- Sections: הודעות | אירועים | מורים | מערכת שעות | מקומות ישיבה
+- Login: email + password (Firebase Auth — Google OAuth not used due to domain authorization complexity)
 - Changes go live instantly (no deploy needed)
-- Works on mobile too — bookmark it
+- Mobile-friendly: scrollable tabs, forms stack vertically, tables scroll horizontally
+
+### Per-section behaviour
+| Section | How editing works |
+|---|---|
+| הודעות | Add form at top; existing list below with Delete button |
+| אירועים | Add form at top with date picker + category dropdown; list below with Delete |
+| מורים | Add form at top; table below scrolls horizontally; Delete button per row |
+| מערכת שעות | Horizontally scrollable inline table — click any cell to edit, auto-saves on blur |
+| מקומות ישיבה | Drag-and-drop grid — drag card to swap; click `+` on empty slot to add; click `×` to remove |
+
+### Seating grid details
+- לוח bar at bottom, 🚪 door indicator to its right (matches physical classroom)
+- Row labels inverted: stored `order=5` → displayed שורה 1 (front), stored `order=1` → displayed שורה 5 (back)
+- Local `seatingData` object keeps state; `renderSeating()` rebuilds DOM after every change; Firestore updated async
 
 ## Backend — Firebase Firestore
 - **Firebase project:** `kita-3017b`
