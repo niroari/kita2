@@ -706,9 +706,9 @@
       </div>`;
 
     const totalRows = seatingDocs.length;
-    const rowsHtml = [...seatingDocs].reverse().map((docId, i) => {
+    const rowsHtml = seatingDocs.map((docId, i) => {
       const r = seatingData[docId];
-      const displayRow = i + 1; // front row = שורה 1
+      const displayRow = totalRows - i; // stored row 1 → label 5, stored row 5 → label 1
       const desksHtml = DESK_PAIRS.map(([rf, lf]) => {
         return `<div style="display:flex;flex-direction:column;gap:6px;align-items:center;background:#17152b;padding:10px 12px;border-radius:10px">
           ${seatSlot(docId, rf, r[rf])}
