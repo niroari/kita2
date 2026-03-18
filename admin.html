@@ -205,6 +205,31 @@
     .status-msg.err { background: #7f1d1d; color: #fca5a5; display: block; }
 
     .loading { color: #64748b; font-size: 0.9rem; padding: 1rem 0; }
+
+    /* ── Seating drag-and-drop ── */
+    .seat-slot {
+      width: 80px; height: 36px;
+      border: 2px dashed #374151;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .seat-slot.drag-over {
+      border-color: #7c3aed;
+      background: rgba(124,58,237,0.15);
+    }
+    .student-card {
+      width: 100%; height: 100%;
+      background: #2e1f5e;
+      border: 1px solid #5b21b6;
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; color: #ddd6fe;
+      cursor: grab; user-select: none;
+      padding: 0 6px; text-align: center;
+    }
+    .student-card:active { cursor: grabbing; opacity: 0.7; }
+    .empty-seat { color: #374151; font-size: 1.1rem; }
   </style>
 </head>
 <body>
@@ -605,7 +630,13 @@
     const snap = await db.collection('schedule').orderBy('order').get();
     if (snap.empty) { el.innerHTML = '<div class="loading">אין נתונים</div>'; return; }
 
-    el.innerHTML = `<table class="data-table">
+    el.innerHTML = `<div style="overflow-x:auto;">
+    <table class="data-table" style="min-width:860px;table-layout:fixed">
+      <colgroup>
+        <col style="width:52px"><col style="width:90px">
+        ${DAY_LABELS.map(() => '<col style="width:120px">').join('')}
+        <col style="width:80px">
+      </colgroup>
       <thead><tr>
         <th>שיעור</th><th>שעות</th>
         ${DAY_LABELS.map(d => `<th>${d}</th>`).join('')}
@@ -614,7 +645,7 @@
       <tbody>${snap.docs.map(d => {
         const r = d.data();
         const cell = (val, field) =>
-          `<td><input style="background:transparent;border:none;color:#e2e8f0;width:100%;font-size:0.88rem"
+          `<td><input style="background:transparent;border:none;color:#e2e8f0;width:100%;font-size:0.88rem;min-width:0"
             value="${(val||'').replace(/"/g,'&quot;')}"
             onchange="updateScheduleField('${d.id}','${field}',this.value)"></td>`;
         return `<tr>
@@ -624,7 +655,7 @@
           ${cell(r.type,'type')}
         </tr>`;
       }).join('')}</tbody>
-    </table>`;
+    </table></div>`;
   }
 
   async function updateScheduleField(docId, field, value) {
@@ -633,46 +664,93 @@
   }
 
   // ══════════════════════════════════════════════════════════
-  // SEATING — inline editable grid
+  // SEATING — drag-and-drop grid
   // ══════════════════════════════════════════════════════════
-  const DESK_FIELDS = ['desk1_right','desk1_left','desk2_right','desk2_left',
-                       'desk3_right','desk3_left','desk4_right','desk4_left'];
+  let seatingData = {};  // docId → data object
+  let seatingDocs = [];  // ordered doc IDs
+  let dragSrc = null;    // { docId, field }
 
   async function loadSeating() {
     loaded['seating'] = true;
-    const el = document.getElementById('seating-editor');
     const snap = await db.collection('seating').orderBy('order').get();
-    if (snap.empty) { el.innerHTML = '<div class="loading">אין נתונים</div>'; return; }
-
-    el.innerHTML = snap.docs.map(d => {
-      const r = d.data();
-      const deskHtml = (right_field, left_field, label) => `
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;background:#17152b;padding:10px 12px;border-radius:8px;min-width:110px">
-          <span style="font-size:0.72rem;color:#64748b;margin-bottom:2px">${label}</span>
-          <input style="background:#0f0e1a;border:1px solid #374151;border-radius:4px;color:#e2e8f0;padding:4px 8px;width:90px;text-align:center;font-size:0.85rem"
-            value="${(r[right_field]||'').replace(/"/g,'&quot;')}"
-            placeholder="ימין"
-            onchange="updateSeatingField('${d.id}','${right_field}',this.value)">
-          <input style="background:#0f0e1a;border:1px solid #374151;border-radius:4px;color:#e2e8f0;padding:4px 8px;width:90px;text-align:center;font-size:0.85rem"
-            value="${(r[left_field]||'').replace(/"/g,'&quot;')}"
-            placeholder="שמאל"
-            onchange="updateSeatingField('${d.id}','${left_field}',this.value)">
-        </div>`;
-      return `<div style="margin-bottom:12px">
-        <div style="font-size:0.8rem;color:#64748b;margin-bottom:6px">שורה ${r.order}</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          ${deskHtml('desk1_right','desk1_left','שולחן 1')}
-          ${deskHtml('desk2_right','desk2_left','שולחן 2')}
-          ${deskHtml('desk3_right','desk3_left','שולחן 3')}
-          ${deskHtml('desk4_right','desk4_left','שולחן 4')}
-        </div>
-      </div>`;
-    }).join('');
+    if (snap.empty) { document.getElementById('seating-editor').innerHTML = '<div class="loading">אין נתונים</div>'; return; }
+    seatingData = {};
+    seatingDocs = snap.docs.map(d => { seatingData[d.id] = { ...d.data() }; return d.id; });
+    renderSeating();
   }
 
-  async function updateSeatingField(docId, field, value) {
-    await db.collection('seating').doc(docId).update({ [field]: value });
+  function renderSeating() {
+    const el = document.getElementById('seating-editor');
+    const DESK_PAIRS = [
+      ['desk1_right','desk1_left'],
+      ['desk2_right','desk2_left'],
+      ['desk3_right','desk3_left'],
+      ['desk4_right','desk4_left'],
+    ];
+
+    el.innerHTML = seatingDocs.map(docId => {
+      const r = seatingData[docId];
+      const desksHtml = DESK_PAIRS.map(([rf, lf]) => {
+        return `<div style="display:flex;flex-direction:column;gap:6px;align-items:center;background:#17152b;padding:10px 12px;border-radius:10px">
+          ${seatSlot(docId, rf, r[rf])}
+          <div style="width:60px;height:3px;background:#2d2b55;border-radius:2px"></div>
+          ${seatSlot(docId, lf, r[lf])}
+        </div>`;
+      }).join('');
+
+      return `<div style="margin-bottom:16px">
+        <div style="font-size:0.78rem;color:#64748b;margin-bottom:8px">שורה ${r.order}</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">${desksHtml}</div>
+      </div>`;
+    }).join('');
+
+    // Attach drag/drop listeners after render
+    el.querySelectorAll('.seat-slot').forEach(slot => {
+      slot.addEventListener('dragover',  e => { e.preventDefault(); slot.classList.add('drag-over'); });
+      slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+      slot.addEventListener('drop',      e => handleDrop(e, slot.dataset.doc, slot.dataset.field));
+    });
+    el.querySelectorAll('.student-card').forEach(card => {
+      card.addEventListener('dragstart', e => handleDragStart(e, card.dataset.doc, card.dataset.field));
+      card.addEventListener('dragend',   () => el.querySelectorAll('.seat-slot').forEach(s => s.classList.remove('drag-over')));
+    });
+  }
+
+  function seatSlot(docId, field, value) {
+    const name = (value || '').trim();
+    const inner = name
+      ? `<div class="student-card" draggable="true" data-doc="${docId}" data-field="${field}">${name}</div>`
+      : `<div class="empty-seat">+</div>`;
+    return `<div class="seat-slot" data-doc="${docId}" data-field="${field}">${inner}</div>`;
+  }
+
+  function handleDragStart(e, docId, field) {
+    dragSrc = { docId, field };
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  async function handleDrop(e, targetDocId, targetField) {
+    e.preventDefault();
+    document.querySelectorAll('.seat-slot').forEach(s => s.classList.remove('drag-over'));
+    if (!dragSrc || (dragSrc.docId === targetDocId && dragSrc.field === targetField)) return;
+
+    const srcValue = seatingData[dragSrc.docId][dragSrc.field] || '';
+    const tgtValue = seatingData[targetDocId][targetField] || '';
+
+    // Swap locally
+    seatingData[dragSrc.docId][dragSrc.field] = tgtValue;
+    seatingData[targetDocId][targetField]      = srcValue;
+
+    // Re-render immediately for snappy feel
+    renderSeating();
+
+    // Save to Firestore
+    const batch = db.batch();
+    batch.update(db.collection('seating').doc(dragSrc.docId), { [dragSrc.field]: tgtValue });
+    batch.update(db.collection('seating').doc(targetDocId),   { [targetField]:   srcValue });
+    await batch.commit();
     showStatus('seat-status', 'נשמר ✓');
+    dragSrc = null;
   }
 
   // ══════════════════════════════════════════════════════════
