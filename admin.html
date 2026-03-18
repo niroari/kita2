@@ -688,7 +688,24 @@
       ['desk4_right','desk4_left'],
     ];
 
-    el.innerHTML = seatingDocs.map(docId => {
+    const classroomHeader = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <div style="
+          background:#17152b;border:2px dashed #4b5563;border-radius:8px;
+          padding:8px 14px;color:#6b7280;font-size:0.8rem;white-space:nowrap;
+          display:flex;flex-direction:column;align-items:center;gap:3px">
+          <span style="font-size:1.1rem">🚪</span>
+          <span>דלת</span>
+        </div>
+        <div style="
+          flex:1;background:#1e3a5f;border:2px solid #3b82f6;border-radius:10px;
+          padding:12px;text-align:center;color:#93c5fd;font-size:1rem;
+          font-weight:bold;letter-spacing:3px">
+          לוח
+        </div>
+      </div>`;
+
+    el.innerHTML = classroomHeader + seatingDocs.map(docId => {
       const r = seatingData[docId];
       const desksHtml = DESK_PAIRS.map(([rf, lf]) => {
         return `<div style="display:flex;flex-direction:column;gap:6px;align-items:center;background:#17152b;padding:10px 12px;border-radius:10px">
