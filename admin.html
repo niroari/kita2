@@ -608,7 +608,7 @@
     el.innerHTML = '<div class="loading">טוען...</div>';
     const snap = await db.collection('teachers').orderBy('order').get();
     if (snap.empty) { el.innerHTML = '<div class="loading">אין מורים</div>'; return; }
-    el.innerHTML = `<table class="data-table">
+    el.innerHTML = `<div style="overflow-x:auto"><table class="data-table" style="min-width:500px">
       <thead><tr><th>שם</th><th>מקצוע</th><th>תפקיד</th><th>טלפון</th><th>מייל</th><th></th></tr></thead>
       <tbody>${snap.docs.map(d => {
         const r = d.data();
@@ -623,7 +623,7 @@
           </div></td>
         </tr>`;
       }).join('')}</tbody>
-    </table>`;
+    </table></div>`;
   }
 
   async function addTeacher() {
@@ -744,7 +744,7 @@
 
       return `<div style="margin-bottom:16px">
         <div style="font-size:0.78rem;color:#64748b;margin-bottom:8px">שורה ${displayRow}</div>
-        <div style="display:flex;gap:10px;width:100%">${desksHtml}</div>
+        <div style="overflow-x:auto"><div style="display:flex;gap:10px;min-width:480px">${desksHtml}</div></div>
       </div>`;
     }).join('');
 
