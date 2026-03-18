@@ -688,8 +688,8 @@
       ['desk4_right','desk4_left'],
     ];
 
-    const classroomHeader = `
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    const classroomFooter = `
+      <div style="display:flex;align-items:center;gap:10px;margin-top:20px">
         <div style="
           background:#17152b;border:2px dashed #4b5563;border-radius:8px;
           padding:8px 14px;color:#6b7280;font-size:0.8rem;white-space:nowrap;
@@ -705,8 +705,10 @@
         </div>
       </div>`;
 
-    el.innerHTML = classroomHeader + seatingDocs.map(docId => {
+    const totalRows = seatingDocs.length;
+    const rowsHtml = [...seatingDocs].reverse().map((docId, i) => {
       const r = seatingData[docId];
+      const displayRow = i + 1; // front row = שורה 1
       const desksHtml = DESK_PAIRS.map(([rf, lf]) => {
         return `<div style="display:flex;flex-direction:column;gap:6px;align-items:center;background:#17152b;padding:10px 12px;border-radius:10px">
           ${seatSlot(docId, rf, r[rf])}
@@ -716,10 +718,12 @@
       }).join('');
 
       return `<div style="margin-bottom:16px">
-        <div style="font-size:0.78rem;color:#64748b;margin-bottom:8px">שורה ${r.order}</div>
+        <div style="font-size:0.78rem;color:#64748b;margin-bottom:8px">שורה ${displayRow}</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">${desksHtml}</div>
       </div>`;
     }).join('');
+
+    el.innerHTML = rowsHtml + classroomFooter;
 
     // Attach drag/drop listeners after render
     el.querySelectorAll('.seat-slot').forEach(slot => {
