@@ -1552,23 +1552,26 @@
   loadAnnouncements();
 
   function loadSeating() {
-    window._seatingCallback = function(response) {
-      try {
-        const rows = response.table?.rows ?? [];
-        const inner = document.querySelector('.classroom-inner');
-        const footer = inner.querySelector('.classroom-footer');
-        inner.innerHTML = '';
+    db.collection('seating').orderBy('order').get().then(snapshot => {
+      const inner = document.querySelector('.classroom-inner');
+      const footer = inner.querySelector('.classroom-footer');
+      inner.innerHTML = '';
 
-        let delay = 0.05;
+      let delay = 0.05;
 
-        rows.forEach((row) => {
-          const deskRow = document.createElement('div');
-          deskRow.className = 'desk-row';
+      snapshot.docs.forEach(d => {
+        const row = d.data();
+        const deskRow = document.createElement('div');
+        deskRow.className = 'desk-row';
 
-          const cells = row.c || [];
-          for (let i = 0; i < cells.length; i += 2) {
-            const v1 = (cells[i]?.v ?? '').toString().trim();
-            const v2 = (cells[i + 1]?.v ?? '').toString().trim();
+        const pairs = [
+          [row.desk1_right || '', row.desk1_left || ''],
+          [row.desk2_right || '', row.desk2_left || ''],
+          [row.desk3_right || '', row.desk3_left || ''],
+          [row.desk4_right || '', row.desk4_left || ''],
+        ];
+
+        for (const [v1, v2] of pairs) {
             const isLidor = v1 === 'לידור';
             const isEmpty  = !v1 && !v2;
             const isDouble = !isLidor && Boolean(v1) && Boolean(v2);
@@ -1623,19 +1626,10 @@
         }, { threshold: 0.05 });
         seatingObserver.observe(classroom);
 
-      } catch(e) {
-        const el = document.querySelector('.seating-loading');
-        if (el) el.textContent = 'שגיאה בטעינת מקומות ישיבה';
-      }
-    };
-
-    const script = document.createElement('script');
-    script.src = `https://docs.google.com/spreadsheets/d/${SEATING_SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:_seatingCallback&sheet=${encodeURIComponent(SEATING_SHEET_NAME)}&headers=0&cb=${Date.now()}`;
-    script.onerror = () => {
+    }).catch(() => {
       const el = document.querySelector('.seating-loading');
-      if (el) el.textContent = 'לא ניתן לטעון מקומות ישיבה — בדוק שהגיליון שותף כראוי.';
-    };
-    document.head.appendChild(script);
+      if (el) el.textContent = 'שגיאה בטעינת מקומות ישיבה';
+    });
   }
 
   loadSeating();
