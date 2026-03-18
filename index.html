@@ -1652,92 +1652,63 @@
   };
 
   function loadEvents() {
-    window._eventsCallback = function(response) {
-      const container = document.getElementById('events-list');
-      try {
-        const rows = response.table?.rows ?? [];
-        if (rows.length === 0) {
-          container.innerHTML = '<div class="events-loading">אין אירועים</div>';
-          return;
-        }
+    const container = document.getElementById('events-list');
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const parseEventDate = (cell) => {
-          const tryStr = (raw) => {
-            const s = (raw ?? '').toString().trim();
-            if (!s) return new Date(NaN);
-            // Google Sheets native date: "Date(YYYY,M,D)" — month is 0-indexed
-            const m = s.match(/^Date\((\d+),(\d+),(\d+)\)$/);
-            if (m) return new Date(+m[1], +m[2], +m[3]);
-            // DD/MM/YYYY or DD/M/YYYY (slashes)
-            const sl = s.split('/');
-            if (sl.length === 3) return new Date(+sl[2], +sl[1] - 1, +sl[0]);
-            // D.M.YYYY or DD.MM.YYYY (dots)
-            const p = s.split('.');
-            if (p.length === 3) return new Date(+p[2], +p[1] - 1, +p[0]);
-            return new Date(NaN);
-          };
-          // Try raw value first; if that fails, try the formatted display string (f)
-          const fromV = tryStr(cell?.v);
-          return isNaN(fromV) ? tryStr(cell?.f) : fromV;
-        };
-
-        const formatRange = (start, end) => {
-          const d1 = start.getDate(), m1 = start.getMonth() + 1;
-          if (!end || isNaN(end.getTime())) return `${d1}.${m1}`;
-          const d2 = end.getDate(), m2 = end.getMonth() + 1;
-          return m1 === m2 ? `${d1}–${d2}.${m1}` : `${d1}.${m1}–${d2}.${m2}`;
-        };
-
-        const events = rows.map(r => {
-          const date    = parseEventDate(r.c[0]);
-          const title   = (r.c[1]?.v ?? '').toString().trim();
-          const time    = (r.c[2]?.v ?? '').toString().trim();
-          const cat     = (r.c[3]?.v ?? '').toString().trim();
-          const endDate = parseEventDate(r.c[4]);
-          const display = formatRange(date, endDate);
-          const sortEnd = (!isNaN(endDate?.getTime())) ? endDate : date;
-          return { date, endDate, sortEnd, display, title, time, cat };
-        }).filter(e => e.title && !isNaN(e.date.getTime()))
-          .sort((a, b) => a.date - b.date);
-
-        const groups = {};
-        const groupOrder = [];
-        events.forEach(e => {
-          const key = `${e.date.getFullYear()}-${e.date.getMonth()}`;
-          if (!groups[key]) {
-            groups[key] = { label: `${MONTH_NAMES[e.date.getMonth()]} ${e.date.getFullYear()}`, events: [] };
-            groupOrder.push(key);
-          }
-          groups[key].events.push(e);
-        });
-
-        _monthGroups = groupOrder.map(key => {
-          const g = groups[key];
-          const allPast = g.events.every(e => e.sortEnd < today);
-          return { label: g.label, events: g.events, allPast };
-        });
-
-        // Start at the first month that has upcoming events (or last month if all past)
-        const firstNonPast = _monthGroups.findIndex(g => !g.allPast);
-        _monthIdx = firstNonPast >= 0 ? firstNonPast : _monthGroups.length - 1;
-
-        document.getElementById('month-nav').style.display = 'flex';
-        renderCurrentMonth();
-
-      } catch(err) {
-        container.innerHTML = '<div class="events-loading">שגיאה בטעינת האירועים</div>';
+    db.collection('events').get().then(snapshot => {
+      if (snapshot.empty) {
+        container.innerHTML = '<div class="events-loading">אין אירועים</div>';
+        return;
       }
-    };
 
-    const script = document.createElement('script');
-    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:_eventsCallback&sheet=${encodeURIComponent(EVENTS_SHEET_NAME)}&headers=1&cb=${Date.now()}`;
-    script.onerror = () => {
-      document.getElementById('events-list').innerHTML = '<div class="events-loading">לא ניתן לטעון אירועים</div>';
-    };
-    document.head.appendChild(script);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const formatRange = (start, end) => {
+        const d1 = start.getDate(), m1 = start.getMonth() + 1;
+        if (!end || isNaN(end.getTime())) return `${d1}.${m1}`;
+        const d2 = end.getDate(), m2 = end.getMonth() + 1;
+        return m1 === m2 ? `${d1}–${d2}.${m1}` : `${d1}.${m1}–${d2}.${m2}`;
+      };
+
+      const events = snapshot.docs.map(d => {
+        const data    = d.data();
+        const date    = data.date?.toDate()    ?? new Date(NaN);
+        const endDate = data.endDate?.toDate() ?? new Date(NaN);
+        const title   = data.title    || '';
+        const time    = data.time     || '';
+        const cat     = data.category || '';
+        const display = formatRange(date, endDate);
+        const sortEnd = !isNaN(endDate?.getTime()) ? endDate : date;
+        return { date, endDate, sortEnd, display, title, time, cat };
+      }).filter(e => e.title && !isNaN(e.date.getTime()))
+        .sort((a, b) => a.date - b.date);
+
+      const groups = {};
+      const groupOrder = [];
+      events.forEach(e => {
+        const key = `${e.date.getFullYear()}-${e.date.getMonth()}`;
+        if (!groups[key]) {
+          groups[key] = { label: `${MONTH_NAMES[e.date.getMonth()]} ${e.date.getFullYear()}`, events: [] };
+          groupOrder.push(key);
+        }
+        groups[key].events.push(e);
+      });
+
+      _monthGroups = groupOrder.map(key => {
+        const g = groups[key];
+        const allPast = g.events.every(e => e.sortEnd < today);
+        return { label: g.label, events: g.events, allPast };
+      });
+
+      const firstNonPast = _monthGroups.findIndex(g => !g.allPast);
+      _monthIdx = firstNonPast >= 0 ? firstNonPast : _monthGroups.length - 1;
+
+      document.getElementById('month-nav').style.display = 'flex';
+      renderCurrentMonth();
+
+    }).catch(() => {
+      container.innerHTML = '<div class="events-loading">שגיאה בטעינת האירועים</div>';
+    });
   }
 
   loadEvents();
