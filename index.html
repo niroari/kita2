@@ -1503,12 +1503,6 @@
   //  5. העתק את ה-ID מהכתובת (בין /d/ לבין /edit)
   //     ושים אותו בשורה הבאה:
   // ══════════════════════════════════════════════════════
-  const SHEET_ID   = '1C3qCuU_SwJvczmGszW52v71aSC6TWtN7xQT1KsOPBlM';
-  const SHEET_NAME = 'הודעות';
-
-  const SEATING_SHEET_ID   = SHEET_ID;
-  const SEATING_SHEET_NAME = 'ישיבה';
-
   // ── Firebase ──────────────────────────────────────────────
   firebase.initializeApp({
     apiKey:            'AIzaSyBokdxHl8x7REL9Gii1SsyldUka_doneP0',
@@ -1634,7 +1628,6 @@
 
   loadSeating();
 
-  const EVENTS_SHEET_NAME = 'אירועים';
   const MONTH_NAMES = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
   const CATEGORY_MAP = {
     'מבחן':  { dot: 'dot-exam',    badge: 'badge-exam',    label: 'מבחן' },
