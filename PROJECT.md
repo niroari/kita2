@@ -12,6 +12,7 @@ Static HTML file — no server, no framework. Data comes from Firebase Firestore
 
 ## Files
 - `index.html` — the entire site
+- `admin.html` — password-protected admin panel for editing all content
 - `migrate.html` — one-time migration tool (gitignored, local only — run via `python3 -m http.server 8080`)
 
 ## Sections (page order)
@@ -22,12 +23,18 @@ Static HTML file — no server, no framework. Data comes from Firebase Firestore
 5. **צוות המורים** — teacher cards collapsed by default, click to expand contact info
 6. **קישורים חשובים** — 9 link cards (4-column grid); last card is full-width featured NotebookLM card
 
+## Admin Panel
+- **URL:** `kita2.vercel.app/admin.html`
+- Login with email + password (Firebase Authentication)
+- Sections: הודעות | אירועים | מורים | מערכת שעות | מקומות ישיבה
+- Changes go live instantly (no deploy needed)
+- Works on mobile too — bookmark it
+
 ## Backend — Firebase Firestore
 - **Firebase project:** `kita-3017b`
-- **Console:** https://console.firebase.google.com → project Kita → Firestore
 - **SDK:** v10.12.0 compat, loaded from CDN in `<head>`
-- **Security rules:** public read (`allow read: if true`), no external write (`allow write: if false`)
-- **To edit data:** Firebase Console → Firestore → open collection → click document → edit fields
+- **Security rules:** public read (`allow read: if true`), authenticated write only (`allow write: if request.auth != null`)
+- **To edit data:** use the admin panel at `/admin.html` — no need to touch Firebase Console directly
 
 ### Collections
 | Collection | One document per | Key fields |
@@ -133,7 +140,7 @@ Architecture would likely be: one Firebase project per class, or one project wit
 ## Workflow — Publishing Updates
 
 ### Updating site content (data)
-- Open Firebase Console → Firestore → find the relevant collection → edit document fields
+- Go to `kita2.vercel.app/admin.html`, log in, edit
 - Changes are live immediately (no deploy needed)
 
 ### Updating site design / code
