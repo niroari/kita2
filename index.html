@@ -1854,39 +1854,37 @@
   loadTeachers();
 
   function loadSchedule() {
-    window._scheduleCallback = function(response) {
-      const tbody = document.getElementById('schedule-tbody');
-      try {
-        const rows = response.table?.rows ?? [];
-        if (rows.length === 0) { tbody.innerHTML = ''; return; }
+    const tbody = document.getElementById('schedule-tbody');
 
-        tbody.innerHTML = rows.map(r => {
-          const get = i => (r.c[i]?.v ?? '').toString().trim();
-          const period = get(0), time = get(1), type = get(8);
-          const days = [2,3,4,5,6,7].map(i => get(i));
+    db.collection('schedule').orderBy('order').get().then(snapshot => {
+      if (snapshot.empty) { tbody.innerHTML = ''; return; }
 
-          if (type === 'הפסקה') {
-            return `<tr class="break-row">
-              <td></td><td class="time-cell">${time}</td>
-              <td colspan="6">${days[0]}</td>
-            </tr>`;
-          }
-          const dayCells = days.map(d =>
-            d ? `<td>${d}</td>` : `<td class="empty-cell">—</td>`
-          ).join('');
-          return `<tr>
-            <td class="period-num">${period}</td>
-            <td class="time-cell">${time}</td>
-            ${dayCells}
+      tbody.innerHTML = snapshot.docs.map(d => {
+        const row  = d.data();
+        const period = row.period || '';
+        const time   = row.time   || '';
+        const type   = row.type   || '';
+        const days   = [row.sun, row.mon, row.tue, row.wed, row.thu, row.fri]
+                         .map(v => (v || '').trim());
+
+        if (type === 'הפסקה') {
+          return `<tr class="break-row">
+            <td></td><td class="time-cell">${time}</td>
+            <td colspan="6">${days[0]}</td>
           </tr>`;
-        }).join('');
-      } catch(e) {
-        tbody.innerHTML = '<tr><td colspan="8" class="time-cell" style="padding:1.5rem;text-align:center">שגיאה בטעינת המערכת</td></tr>';
-      }
-    };
-    const script = document.createElement('script');
-    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:_scheduleCallback&sheet=${encodeURIComponent('מערכת שעות')}&headers=1&cb=${Date.now()}`;
-    document.head.appendChild(script);
+        }
+        const dayCells = days.map(d =>
+          d ? `<td>${d}</td>` : `<td class="empty-cell">—</td>`
+        ).join('');
+        return `<tr>
+          <td class="period-num">${period}</td>
+          <td class="time-cell">${time}</td>
+          ${dayCells}
+        </tr>`;
+      }).join('');
+    }).catch(() => {
+      tbody.innerHTML = '<tr><td colspan="8" class="time-cell" style="padding:1.5rem;text-align:center">שגיאה בטעינת המערכת</td></tr>';
+    });
   }
 
   loadSchedule();
