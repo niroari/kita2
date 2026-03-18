@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניהול אתר ז׳2</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f0e1a;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    /* ── Login Screen ── */
+    #login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .login-box {
+      background: #1e1b33;
+      border: 1px solid #2d2b55;
+      border-radius: 16px;
+      padding: 2.5rem;
+      width: 340px;
+      text-align: center;
+    }
+    .login-box h1 { font-size: 1.4rem; margin-bottom: 0.4rem; }
+    .login-box p  { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      background: white;
+      color: #1a1a1a;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .google-btn:hover { opacity: 0.9; }
+    .google-btn svg { flex-shrink: 0; }
+    .login-error { color: #f87171; font-size: 0.85rem; margin-top: 1rem; }
+
+    /* ── App Shell ── */
+    #app { display: none; }
+
+    header {
+      background: #1e1b33;
+      border-bottom: 1px solid #2d2b55;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 { font-size: 1.1rem; color: #a78bfa; }
+    .logout-btn {
+      background: none;
+      border: 1px solid #4b5563;
+      color: #94a3b8;
+      padding: 0.35rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .logout-btn:hover { border-color: #a78bfa; color: #a78bfa; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      padding: 1rem 1.5rem 0;
+      border-bottom: 1px solid #2d2b55;
+      background: #17152b;
+    }
+    .tab-btn {
+      padding: 0.6rem 1.2rem;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.95rem;
+      margin-bottom: -1px;
+    }
+    .tab-btn.active { color: #a78bfa; border-bottom-color: #a78bfa; }
+    .tab-btn:hover:not(.active) { color: #e2e8f0; }
+
+    /* ── Content ── */
+    .tab-content { display: none; padding: 1.5rem; max-width: 900px; margin: 0 auto; }
+    .tab-content.active { display: block; }
+
+    /* ── Cards / Forms ── */
+    .section-card {
+      background: #1e1b33;
+      border: 1px solid #2d2b55;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-card h2 { font-size: 1rem; margin-bottom: 1.2rem; color: #c4b5fd; }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; min-width: 160px; }
+    .form-group label { font-size: 0.82rem; color: #94a3b8; }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      background: #0f0e1a;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      padding: 0.55rem 0.75rem;
+      color: #e2e8f0;
+      font-size: 0.9rem;
+      font-family: Arial, sans-serif;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #7c3aed;
+    }
+    .form-group textarea { resize: vertical; min-height: 70px; }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .checkbox-row input[type=checkbox] { width: 17px; height: 17px; accent-color: #7c3aed; cursor: pointer; }
+    .checkbox-row label { font-size: 0.9rem; cursor: pointer; }
+
+    .btn {
+      padding: 0.55rem 1.3rem;
+      border: none;
+      border-radius: 7px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: #7c3aed; color: white; }
+    .btn-danger  { background: #991b1b; color: white; padding: 0.35rem 0.8rem; font-size: 0.8rem; font-weight: normal; }
+    .btn-edit    { background: #1e3a5f; color: #93c5fd; padding: 0.35rem 0.8rem; font-size: 0.8rem; font-weight: normal; }
+
+    /* ── Data Table ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .data-table th {
+      text-align: right;
+      padding: 0.6rem 0.75rem;
+      background: #17152b;
+      color: #94a3b8;
+      font-weight: normal;
+      border-bottom: 1px solid #2d2b55;
+    }
+    .data-table td {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid #1e1b33;
+      vertical-align: top;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: #17152b; }
+    .actions { display: flex; gap: 0.4rem; }
+
+    .important-badge {
+      display: inline-block;
+      background: #7f1d1d;
+      color: #fca5a5;
+      font-size: 0.72rem;
+      padding: 0.1rem 0.5rem;
+      border-radius: 4px;
+      margin-right: 0.4rem;
+    }
+
+    .status-msg {
+      font-size: 0.85rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .status-msg.ok  { background: #064e3b; color: #6ee7b7; display: block; }
+    .status-msg.err { background: #7f1d1d; color: #fca5a5; display: block; }
+
+    .loading { color: #64748b; font-size: 0.9rem; padding: 1rem 0; }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>ניהול אתר ז׳2</h1>
+    <p>כניסה למנהל האתר בלבד</p>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      כניסה עם Google
+    </button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <header>
+    <h1>ניהול אתר ז׳2</h1>
+    <button class="logout-btn" onclick="signOut()">יציאה</button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('announcements', this)">הודעות</button>
+    <button class="tab-btn" onclick="showTab('events', this)">אירועים</button>
+    <button class="tab-btn" onclick="showTab('teachers', this)">מורים</button>
+    <button class="tab-btn" onclick="showTab('schedule', this)">מערכת שעות</button>
+    <button class="tab-btn" onclick="showTab('seating', this)">ישיבה</button>
+  </div>
+
+  <!-- ── Announcements ── -->
+  <div id="tab-announcements" class="tab-content active">
+    <div class="section-card">
+      <h2>הוספת הודעה</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>תאריך</label>
+          <input type="text" id="ann-date" placeholder="למשל: 18.3.2026">
+        </div>
+        <div class="form-group" style="flex:2">
+          <label>כותרת</label>
+          <input type="text" id="ann-title" placeholder="כותרת ההודעה">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>תוכן (אופציונלי)</label>
+          <textarea id="ann-body" placeholder="פרטי ההודעה..."></textarea>
+        </div>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ann-important">
+        <label for="ann-important">הודעה חשובה (מודגשת באדום)</label>
+      </div>
+      <button class="btn btn-primary" onclick="addAnnouncement()">הוסף הודעה</button>
+      <div class="status-msg" id="ann-status"></div>
+    </div>
+
+    <div class="section-card">
+      <h2>הודעות קיימות</h2>
+      <div id="ann-list" class="loading">טוען...</div>
+    </div>
+  </div>
+
+  <!-- ── Events ── -->
+  <div id="tab-events" class="tab-content">
+    <div class="section-card">
+      <h2>הוספת אירוע</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>תאריך התחלה</label>
+          <input type="date" id="evt-date">
+        </div>
+        <div class="form-group">
+          <label>תאריך סיום (אופציונלי)</label>
+          <input type="date" id="evt-enddate">
+        </div>
+        <div class="form-group" style="flex:2">
+          <label>כותרת</label>
+          <input type="text" id="evt-title" placeholder="שם האירוע">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>שעה (אופציונלי)</label>
+          <input type="text" id="evt-time" placeholder="למשל: 8:00">
+        </div>
+        <div class="form-group">
+          <label>קטגוריה</label>
+          <select id="evt-cat">
+            <option value="מבחן">מבחן</option>
+            <option value="בוחן">בוחן</option>
+            <option value="אירוע">אירוע</option>
+            <option value="חג">חג</option>
+            <option value="חופש">חופש</option>
+            <option value="טיול">טיול</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addEvent()">הוסף אירוע</button>
+      <div class="status-msg" id="evt-status"></div>
+    </div>
+
+    <div class="section-card">
+      <h2>אירועים קיימים</h2>
+      <div id="evt-list" class="loading">טוען...</div>
+    </div>
+  </div>
+
+  <!-- ── Teachers ── -->
+  <div id="tab-teachers" class="tab-content">
+    <div class="section-card">
+      <h2>הוספת מורה</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>שם</label>
+          <input type="text" id="tch-name" placeholder="שם מלא">
+        </div>
+        <div class="form-group">
+          <label>מקצוע</label>
+          <input type="text" id="tch-subject" placeholder="מקצוע">
+        </div>
+        <div class="form-group">
+          <label>תפקיד (אופציונלי)</label>
+          <input type="text" id="tch-role" placeholder="למשל: מחנך">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>טלפון (אופציונלי)</label>
+          <input type="text" id="tch-phone" placeholder="0501234567">
+        </div>
+        <div class="form-group">
+          <label>מייל (אופציונלי)</label>
+          <input type="text" id="tch-email" placeholder="name@school.edu">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addTeacher()">הוסף מורה</button>
+      <div class="status-msg" id="tch-status"></div>
+    </div>
+
+    <div class="section-card">
+      <h2>מורים קיימים</h2>
+      <div id="tch-list" class="loading">טוען...</div>
+    </div>
+  </div>
+
+  <!-- ── Schedule ── -->
+  <div id="tab-schedule" class="tab-content">
+    <div class="section-card">
+      <h2>מערכת שעות</h2>
+      <p style="color:#94a3b8;font-size:0.88rem;margin-bottom:1rem">לחץ על תא כדי לערוך. שינויים נשמרים אוטומטית.</p>
+      <div id="schedule-editor" class="loading">טוען...</div>
+      <div class="status-msg" id="sch-status"></div>
+    </div>
+  </div>
+
+  <!-- ── Seating ── -->
+  <div id="tab-seating" class="tab-content">
+    <div class="section-card">
+      <h2>מקומות ישיבה</h2>
+      <p style="color:#94a3b8;font-size:0.88rem;margin-bottom:1rem">לחץ על מקום כדי לערוך. שינויים נשמרים אוטומטית.</p>
+      <div id="seating-editor" class="loading">טוען...</div>
+      <div class="status-msg" id="seat-status"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Firebase init ──────────────────────────────────────────
+  firebase.initializeApp({
+    apiKey:            'AIzaSyBokdxHl8x7REL9Gii1SsyldUka_doneP0',
+    authDomain:        'kita-3017b.firebaseapp.com',
+    projectId:         'kita-3017b',
+    storageBucket:     'kita-3017b.firebasestorage.app',
+    messagingSenderId: '455203749783',
+    appId:             '1:455203749783:web:b0b27f307e634d6498ced2',
+  });
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  // ── Auth ───────────────────────────────────────────────────
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadAnnouncements();
+    } else {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+    }
+  });
+
+  function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => {
+      document.getElementById('login-error').textContent = 'שגיאה בכניסה: ' + err.message;
+    });
+  }
+
+  function signOut() {
+    auth.signOut();
+  }
+
+  // ── Tabs ───────────────────────────────────────────────────
+  const loaded = {};
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    if (!loaded[name]) {
+      loaded[name] = true;
+      if (name === 'announcements') loadAnnouncements();
+      if (name === 'events')        loadEvents();
+      if (name === 'teachers')      loadTeachers();
+      if (name === 'schedule')      loadSchedule();
+      if (name === 'seating')       loadSeating();
+    }
+  }
+
+  // ── Status helper ──────────────────────────────────────────
+  function showStatus(id, msg, isErr) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'status-msg ' + (isErr ? 'err' : 'ok');
+    setTimeout(() => { el.className = 'status-msg'; }, 3500);
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // ANNOUNCEMENTS
+  // ══════════════════════════════════════════════════════════
+  async function loadAnnouncements() {
+    loaded['announcements'] = true;
+    const el = document.getElementById('ann-list');
+    el.innerHTML = '<div class="loading">טוען...</div>';
+    const snap = await db.collection('announcements').orderBy('order').get();
+    if (snap.empty) { el.innerHTML = '<div class="loading">אין הודעות</div>'; return; }
+    el.innerHTML = `<table class="data-table">
+      <thead><tr><th>תאריך</th><th>כותרת</th><th>תוכן</th><th></th></tr></thead>
+      <tbody>${snap.docs.map(d => {
+        const r = d.data();
+        return `<tr>
+          <td>${r.date || ''}</td>
+          <td>${r.important ? '<span class="important-badge">חשוב</span>' : ''}${r.title || ''}</td>
+          <td style="color:#94a3b8">${r.body || ''}</td>
+          <td><div class="actions">
+            <button class="btn btn-danger" onclick="deleteDoc('announcements','${d.id}',loadAnnouncements)">מחק</button>
+          </div></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }
+
+  async function addAnnouncement() {
+    const date      = document.getElementById('ann-date').value.trim();
+    const title     = document.getElementById('ann-title').value.trim();
+    const body      = document.getElementById('ann-body').value.trim();
+    const important = document.getElementById('ann-important').checked;
+    if (!title) { showStatus('ann-status', 'חובה להזין כותרת', true); return; }
+
+    const snap = await db.collection('announcements').orderBy('order','desc').limit(1).get();
+    const nextOrder = snap.empty ? 1 : snap.docs[0].data().order + 1;
+
+    await db.collection('announcements').add({ order: nextOrder, date, title, body, important });
+    document.getElementById('ann-date').value = '';
+    document.getElementById('ann-title').value = '';
+    document.getElementById('ann-body').value = '';
+    document.getElementById('ann-important').checked = false;
+    showStatus('ann-status', 'ההודעה נוספה בהצלחה ✓');
+    loadAnnouncements();
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // EVENTS
+  // ══════════════════════════════════════════════════════════
+  const MONTH_HE = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  function fmtDate(ts) {
+    if (!ts) return '';
+    const d = ts.toDate();
+    return `${d.getDate()} ${MONTH_HE[d.getMonth()]}`;
+  }
+
+  async function loadEvents() {
+    loaded['events'] = true;
+    const el = document.getElementById('evt-list');
+    el.innerHTML = '<div class="loading">טוען...</div>';
+    const snap = await db.collection('events').orderBy('date').get();
+    if (snap.empty) { el.innerHTML = '<div class="loading">אין אירועים</div>'; return; }
+    el.innerHTML = `<table class="data-table">
+      <thead><tr><th>תאריך</th><th>כותרת</th><th>קטגוריה</th><th>שעה</th><th></th></tr></thead>
+      <tbody>${snap.docs.map(d => {
+        const r = d.data();
+        const dateStr = fmtDate(r.date) + (r.endDate ? ' – ' + fmtDate(r.endDate) : '');
+        return `<tr>
+          <td>${dateStr}</td>
+          <td>${r.title || ''}</td>
+          <td>${r.category || ''}</td>
+          <td style="color:#94a3b8">${r.time || ''}</td>
+          <td><div class="actions">
+            <button class="btn btn-danger" onclick="deleteDoc('events','${d.id}',loadEvents)">מחק</button>
+          </div></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }
+
+  async function addEvent() {
+    const dateVal    = document.getElementById('evt-date').value;
+    const endDateVal = document.getElementById('evt-enddate').value;
+    const title      = document.getElementById('evt-title').value.trim();
+    const time       = document.getElementById('evt-time').value.trim();
+    const category   = document.getElementById('evt-cat').value;
+    if (!dateVal || !title) { showStatus('evt-status', 'חובה למלא תאריך וכותרת', true); return; }
+
+    const data = {
+      date:     firebase.firestore.Timestamp.fromDate(new Date(dateVal)),
+      title, time, category,
+    };
+    if (endDateVal) data.endDate = firebase.firestore.Timestamp.fromDate(new Date(endDateVal));
+
+    await db.collection('events').add(data);
+    document.getElementById('evt-date').value = '';
+    document.getElementById('evt-enddate').value = '';
+    document.getElementById('evt-title').value = '';
+    document.getElementById('evt-time').value = '';
+    showStatus('evt-status', 'האירוע נוסף בהצלחה ✓');
+    loadEvents();
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // TEACHERS
+  // ══════════════════════════════════════════════════════════
+  async function loadTeachers() {
+    loaded['teachers'] = true;
+    const el = document.getElementById('tch-list');
+    el.innerHTML = '<div class="loading">טוען...</div>';
+    const snap = await db.collection('teachers').orderBy('order').get();
+    if (snap.empty) { el.innerHTML = '<div class="loading">אין מורים</div>'; return; }
+    el.innerHTML = `<table class="data-table">
+      <thead><tr><th>שם</th><th>מקצוע</th><th>תפקיד</th><th>טלפון</th><th>מייל</th><th></th></tr></thead>
+      <tbody>${snap.docs.map(d => {
+        const r = d.data();
+        return `<tr>
+          <td>${r.name || ''}</td>
+          <td>${r.subject || ''}</td>
+          <td>${r.role || ''}</td>
+          <td>${r.phone || ''}</td>
+          <td>${r.email || ''}</td>
+          <td><div class="actions">
+            <button class="btn btn-danger" onclick="deleteDoc('teachers','${d.id}',loadTeachers)">מחק</button>
+          </div></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }
+
+  async function addTeacher() {
+    const name    = document.getElementById('tch-name').value.trim();
+    const subject = document.getElementById('tch-subject').value.trim();
+    const role    = document.getElementById('tch-role').value.trim();
+    const phone   = document.getElementById('tch-phone').value.trim();
+    const email   = document.getElementById('tch-email').value.trim();
+    if (!name || !subject) { showStatus('tch-status', 'חובה למלא שם ומקצוע', true); return; }
+
+    const snap = await db.collection('teachers').orderBy('order','desc').limit(1).get();
+    const nextOrder = snap.empty ? 1 : snap.docs[0].data().order + 1;
+
+    await db.collection('teachers').add({ order: nextOrder, name, subject, role, phone, email });
+    ['tch-name','tch-subject','tch-role','tch-phone','tch-email'].forEach(id => document.getElementById(id).value = '');
+    showStatus('tch-status', 'המורה נוסף בהצלחה ✓');
+    loadTeachers();
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // SCHEDULE — inline editable table
+  // ══════════════════════════════════════════════════════════
+  const DAYS = ['sun','mon','tue','wed','thu','fri'];
+  const DAY_LABELS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי'];
+
+  async function loadSchedule() {
+    loaded['schedule'] = true;
+    const el = document.getElementById('schedule-editor');
+    const snap = await db.collection('schedule').orderBy('order').get();
+    if (snap.empty) { el.innerHTML = '<div class="loading">אין נתונים</div>'; return; }
+
+    el.innerHTML = `<table class="data-table">
+      <thead><tr>
+        <th>שיעור</th><th>שעות</th>
+        ${DAY_LABELS.map(d => `<th>${d}</th>`).join('')}
+        <th>סוג</th>
+      </tr></thead>
+      <tbody>${snap.docs.map(d => {
+        const r = d.data();
+        const cell = (val, field) =>
+          `<td><input style="background:transparent;border:none;color:#e2e8f0;width:100%;font-size:0.88rem"
+            value="${(val||'').replace(/"/g,'&quot;')}"
+            onchange="updateScheduleField('${d.id}','${field}',this.value)"></td>`;
+        return `<tr>
+          ${cell(r.period,'period')}
+          ${cell(r.time,'time')}
+          ${DAYS.map(day => cell(r[day], day)).join('')}
+          ${cell(r.type,'type')}
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }
+
+  async function updateScheduleField(docId, field, value) {
+    await db.collection('schedule').doc(docId).update({ [field]: value });
+    showStatus('sch-status', 'נשמר ✓');
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // SEATING — inline editable grid
+  // ══════════════════════════════════════════════════════════
+  const DESK_FIELDS = ['desk1_right','desk1_left','desk2_right','desk2_left',
+                       'desk3_right','desk3_left','desk4_right','desk4_left'];
+
+  async function loadSeating() {
+    loaded['seating'] = true;
+    const el = document.getElementById('seating-editor');
+    const snap = await db.collection('seating').orderBy('order').get();
+    if (snap.empty) { el.innerHTML = '<div class="loading">אין נתונים</div>'; return; }
+
+    el.innerHTML = snap.docs.map(d => {
+      const r = d.data();
+      const deskHtml = (right_field, left_field, label) => `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;background:#17152b;padding:10px 12px;border-radius:8px;min-width:110px">
+          <span style="font-size:0.72rem;color:#64748b;margin-bottom:2px">${label}</span>
+          <input style="background:#0f0e1a;border:1px solid #374151;border-radius:4px;color:#e2e8f0;padding:4px 8px;width:90px;text-align:center;font-size:0.85rem"
+            value="${(r[right_field]||'').replace(/"/g,'&quot;')}"
+            placeholder="ימין"
+            onchange="updateSeatingField('${d.id}','${right_field}',this.value)">
+          <input style="background:#0f0e1a;border:1px solid #374151;border-radius:4px;color:#e2e8f0;padding:4px 8px;width:90px;text-align:center;font-size:0.85rem"
+            value="${(r[left_field]||'').replace(/"/g,'&quot;')}"
+            placeholder="שמאל"
+            onchange="updateSeatingField('${d.id}','${left_field}',this.value)">
+        </div>`;
+      return `<div style="margin-bottom:12px">
+        <div style="font-size:0.8rem;color:#64748b;margin-bottom:6px">שורה ${r.order}</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          ${deskHtml('desk1_right','desk1_left','שולחן 1')}
+          ${deskHtml('desk2_right','desk2_left','שולחן 2')}
+          ${deskHtml('desk3_right','desk3_left','שולחן 3')}
+          ${deskHtml('desk4_right','desk4_left','שולחן 4')}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function updateSeatingField(docId, field, value) {
+    await db.collection('seating').doc(docId).update({ [field]: value });
+    showStatus('seat-status', 'נשמר ✓');
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // SHARED — delete
+  // ══════════════════════════════════════════════════════════
+  async function deleteDoc(collection, id, reloadFn) {
+    if (!confirm('למחוק?')) return;
+    await db.collection(collection).doc(id).delete();
+    reloadFn();
+  }
+</script>
+</body>
+</html>
