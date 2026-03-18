@@ -208,7 +208,7 @@
 
     /* ── Seating drag-and-drop ── */
     .seat-slot {
-      width: 80px; height: 36px;
+      width: 100%; height: 36px;
       border: 2px dashed #374151;
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
@@ -710,7 +710,7 @@
       const r = seatingData[docId];
       const displayRow = totalRows - i; // stored row 1 → label 5, stored row 5 → label 1
       const desksHtml = DESK_PAIRS.map(([rf, lf]) => {
-        return `<div style="display:flex;flex-direction:column;gap:6px;align-items:center;background:#17152b;padding:10px 12px;border-radius:10px">
+        return `<div style="display:flex;flex-direction:column;gap:6px;align-items:center;background:#17152b;padding:10px 12px;border-radius:10px;flex:1">
           ${seatSlot(docId, rf, r[rf])}
           <div style="width:60px;height:3px;background:#2d2b55;border-radius:2px"></div>
           ${seatSlot(docId, lf, r[lf])}
@@ -719,7 +719,7 @@
 
       return `<div style="margin-bottom:16px">
         <div style="font-size:0.78rem;color:#64748b;margin-bottom:8px">שורה ${displayRow}</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">${desksHtml}</div>
+        <div style="display:flex;gap:10px;width:100%">${desksHtml}</div>
       </div>`;
     }).join('');
 
