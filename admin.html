@@ -444,6 +444,7 @@
     <div class="section-card" style="border-color:rgba(249,115,22,0.35);background:rgba(67,20,7,0.35)">
       <h2 style="color:#fb923c">⚠ מערכת שעות בחירום</h2>
       <p style="color:#fdba74;font-size:0.88rem;margin-bottom:1rem">מערכת זמנית בזמן מבצע שאגת הארי. לחץ על תא כדי לערוך. שינויים נשמרים אוטומטית.</p>
+      <button class="btn btn-primary" style="margin-bottom:1rem" onclick="copyFromRegularSchedule()">העתק ממערכת הרגילה</button>
       <div id="emergency-editor" class="loading">טוען...</div>
       <div class="status-msg" id="emg-status"></div>
     </div>
@@ -797,6 +798,23 @@
   async function updateEmergencyScheduleField(docId, field, value) {
     await db.collection('emergency_schedule').doc(docId).update({ [field]: value });
     showStatus('emg-status', 'נשמר ✓');
+  }
+
+  async function copyFromRegularSchedule() {
+    if (!confirm('זה ימחק את מערכת החירום הקיימת ויעתיק את המערכת הרגילה. להמשיך?')) return;
+    showStatus('emg-status', 'מעתיק...');
+
+    // Delete existing emergency_schedule docs
+    const existing = await db.collection('emergency_schedule').get();
+    await Promise.all(existing.docs.map(d => d.ref.delete()));
+
+    // Copy from schedule
+    const snap = await db.collection('schedule').get();
+    await Promise.all(snap.docs.map(d => db.collection('emergency_schedule').add(d.data())));
+
+    showStatus('emg-status', 'הועתק בהצלחה ✓');
+    loaded['emergency'] = false;
+    loadEmergencySchedule();
   }
 
   // ══════════════════════════════════════════════════════════
