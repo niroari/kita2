@@ -164,6 +164,20 @@
     .btn-primary { background: #7c3aed; color: white; }
     .btn-danger  { background: #991b1b; color: white; padding: 0.35rem 0.8rem; font-size: 0.8rem; font-weight: normal; }
     .btn-edit    { background: #1e3a5f; color: #93c5fd; padding: 0.35rem 0.8rem; font-size: 0.8rem; font-weight: normal; }
+    .btn-save    { background: #064e3b; color: #6ee7b7; padding: 0.35rem 0.8rem; font-size: 0.8rem; font-weight: normal; }
+    .btn-cancel  { background: #374151; color: #e2e8f0; padding: 0.35rem 0.8rem; font-size: 0.8rem; font-weight: normal; }
+    .inline-input {
+      background: #0f0e1a;
+      border: 1px solid #374151;
+      border-radius: 5px;
+      padding: 0.3rem 0.5rem;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      font-family: Arial, sans-serif;
+      width: 100%;
+    }
+    .inline-input:focus { outline: none; border-color: #7c3aed; }
+    textarea.inline-input { resize: vertical; min-height: 54px; }
 
     /* ── Data Table ── */
     .data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
@@ -501,26 +515,63 @@
   // ══════════════════════════════════════════════════════════
   // ANNOUNCEMENTS
   // ══════════════════════════════════════════════════════════
+  let annDocs = {};
+
   async function loadAnnouncements() {
     loaded['announcements'] = true;
     const el = document.getElementById('ann-list');
     el.innerHTML = '<div class="loading">טוען...</div>';
     const snap = await db.collection('announcements').orderBy('order').get();
     if (snap.empty) { el.innerHTML = '<div class="loading">אין הודעות</div>'; return; }
+    annDocs = {};
+    snap.docs.forEach(d => { annDocs[d.id] = d.data(); });
     el.innerHTML = `<table class="data-table">
       <thead><tr><th>תאריך</th><th>כותרת</th><th>תוכן</th><th></th></tr></thead>
       <tbody>${snap.docs.map(d => {
         const r = d.data();
-        return `<tr>
+        return `<tr id="ann-row-${d.id}">
           <td>${r.date || ''}</td>
           <td>${r.important ? '<span class="important-badge">חשוב</span>' : ''}${r.title || ''}</td>
           <td style="color:#94a3b8">${r.body || ''}</td>
           <td><div class="actions">
+            <button class="btn btn-edit" onclick="editAnnouncement('${d.id}')">ערוך</button>
             <button class="btn btn-danger" onclick="deleteDoc('announcements','${d.id}',loadAnnouncements)">מחק</button>
           </div></td>
         </tr>`;
       }).join('')}</tbody>
     </table>`;
+  }
+
+  function editAnnouncement(docId) {
+    const r = annDocs[docId];
+    const row = document.getElementById('ann-row-' + docId);
+    const escapedDate  = (r.date  || '').replace(/"/g, '&quot;');
+    const escapedTitle = (r.title || '').replace(/"/g, '&quot;');
+    const escapedBody  = (r.body  || '').replace(/</g, '&lt;');
+    row.innerHTML = `
+      <td><input class="inline-input" id="ei-date-${docId}"  value="${escapedDate}"></td>
+      <td>
+        <input class="inline-input" id="ei-title-${docId}" value="${escapedTitle}" style="margin-bottom:4px">
+        <label style="font-size:0.8rem;display:flex;align-items:center;gap:5px;color:#94a3b8;cursor:pointer">
+          <input type="checkbox" id="ei-imp-${docId}" ${r.important ? 'checked' : ''} style="accent-color:#7c3aed"> חשוב
+        </label>
+      </td>
+      <td><textarea class="inline-input" id="ei-body-${docId}">${escapedBody}</textarea></td>
+      <td><div class="actions">
+        <button class="btn btn-save"   onclick="saveAnnouncement('${docId}')">שמור</button>
+        <button class="btn btn-cancel" onclick="loadAnnouncements()">ביטול</button>
+      </div></td>
+    `;
+  }
+
+  async function saveAnnouncement(docId) {
+    const date      = document.getElementById('ei-date-'  + docId).value.trim();
+    const title     = document.getElementById('ei-title-' + docId).value.trim();
+    const body      = document.getElementById('ei-body-'  + docId).value.trim();
+    const important = document.getElementById('ei-imp-'   + docId).checked;
+    if (!title) { alert('חובה להזין כותרת'); return; }
+    await db.collection('announcements').doc(docId).update({ date, title, body, important });
+    loadAnnouncements();
   }
 
   async function addAnnouncement() {
