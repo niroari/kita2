@@ -308,6 +308,7 @@
     <button class="tab-btn" onclick="showTab('events', this)">אירועים</button>
     <button class="tab-btn" onclick="showTab('teachers', this)">מורים</button>
     <button class="tab-btn" onclick="showTab('schedule', this)">מערכת שעות</button>
+    <button class="tab-btn" onclick="showTab('emergency', this)" style="color:#fb923c">⚠ חירום</button>
     <button class="tab-btn" onclick="showTab('seating', this)">ישיבה</button>
   </div>
 
@@ -438,6 +439,16 @@
     </div>
   </div>
 
+  <!-- ── Emergency Schedule ── -->
+  <div id="tab-emergency" class="tab-content">
+    <div class="section-card" style="border-color:rgba(249,115,22,0.35);background:rgba(67,20,7,0.35)">
+      <h2 style="color:#fb923c">⚠ מערכת שעות בחירום</h2>
+      <p style="color:#fdba74;font-size:0.88rem;margin-bottom:1rem">מערכת זמנית בזמן מבצע שאגת הארי. לחץ על תא כדי לערוך. שינויים נשמרים אוטומטית.</p>
+      <div id="emergency-editor" class="loading">טוען...</div>
+      <div class="status-msg" id="emg-status"></div>
+    </div>
+  </div>
+
   <!-- ── Seating ── -->
   <div id="tab-seating" class="tab-content">
     <div class="section-card">
@@ -500,6 +511,7 @@
       if (name === 'events')        loadEvents();
       if (name === 'teachers')      loadTeachers();
       if (name === 'schedule')      loadSchedule();
+      if (name === 'emergency')     loadEmergencySchedule();
       if (name === 'seating')       loadSeating();
     }
   }
@@ -737,6 +749,54 @@
   async function updateScheduleField(docId, field, value) {
     await db.collection('schedule').doc(docId).update({ [field]: value });
     showStatus('sch-status', 'נשמר ✓');
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // EMERGENCY SCHEDULE
+  // ══════════════════════════════════════════════════════════
+  async function loadEmergencySchedule() {
+    loaded['emergency'] = true;
+    const el = document.getElementById('emergency-editor');
+    const snap = await db.collection('emergency_schedule').orderBy('order').get();
+    if (snap.empty) {
+      el.innerHTML = `<div style="color:#fdba74;font-size:0.9rem;padding:1rem 0">
+        אין שורות עדיין. הוסף שורות ישירות דרך <a href="https://console.firebase.google.com/project/kita-3017b/firestore" target="_blank" style="color:#fb923c">Firebase Console</a>
+        לאוסף <strong>emergency_schedule</strong> עם שדות: order, period, time, sun, mon, tue, wed, thu, fri, type.
+      </div>`;
+      return;
+    }
+
+    el.innerHTML = `<div style="overflow-x:auto;">
+    <table class="data-table" style="min-width:860px;table-layout:fixed">
+      <colgroup>
+        <col style="width:52px"><col style="width:90px">
+        ${DAY_LABELS.map(() => '<col style="width:120px">').join('')}
+        <col style="width:80px">
+      </colgroup>
+      <thead><tr>
+        <th>שיעור</th><th>שעות</th>
+        ${DAY_LABELS.map(d => `<th>${d}</th>`).join('')}
+        <th>סוג</th>
+      </tr></thead>
+      <tbody>${snap.docs.map(d => {
+        const r = d.data();
+        const cell = (val, field) =>
+          `<td><input style="background:transparent;border:none;color:#e2e8f0;width:100%;font-size:0.88rem;min-width:0"
+            value="${(val||'').replace(/"/g,'&quot;')}"
+            onchange="updateEmergencyScheduleField('${d.id}','${field}',this.value)"></td>`;
+        return `<tr>
+          ${cell(r.period,'period')}
+          ${cell(r.time,'time')}
+          ${DAYS.map(day => cell(r[day], day)).join('')}
+          ${cell(r.type,'type')}
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>`;
+  }
+
+  async function updateEmergencyScheduleField(docId, field, value) {
+    await db.collection('emergency_schedule').doc(docId).update({ [field]: value });
+    showStatus('emg-status', 'נשמר ✓');
   }
 
   // ══════════════════════════════════════════════════════════

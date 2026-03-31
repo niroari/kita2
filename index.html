@@ -237,6 +237,13 @@
       z-index: -1;
     }
 
+    /* Emergency schedule — orange glow top-right */
+    #emergency-schedule::before {
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.13) 0%, transparent 65%);
+      top: -80px; right: -160px;
+    }
+
     /* Schedule — blue glow top-right */
     #schedule::before {
       width: 500px; height: 500px; border-radius: 50%;
@@ -303,6 +310,7 @@
     .icon-amber  { background: rgba(245,158,11,0.15); color: #fbbf24; }
     .icon-teal   { background: rgba(20,184,166,0.15); color: #2dd4bf; }
     .icon-violet { background: rgba(139,92,246,0.15); color: #a78bfa; }
+    .icon-orange { background: rgba(249,115,22,0.18); color: #fb923c; }
 
     h2 {
       font-size: 1.3rem;
@@ -462,6 +470,31 @@
       .quick-link { padding: 14px 10px 12px; font-size: 0.78rem; }
       .quick-link img { width: 36px; height: 36px; }
     }
+
+    /* ── EMERGENCY SCHEDULE ── */
+    .emergency-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(194,65,12,0.18);
+      border: 1px solid rgba(249,115,22,0.35);
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 18px;
+      color: #fdba74;
+      font-size: 0.9rem;
+    }
+    .emergency-note svg { flex-shrink: 0; width: 18px; height: 18px; color: #fb923c; }
+
+    #emergency-schedule .schedule-table {
+      background: rgba(67,20,7,0.55);
+      border-color: rgba(249,115,22,0.25);
+    }
+    #emergency-schedule .schedule-table th {
+      background: rgba(120,40,10,0.7);
+      color: #fed7aa;
+    }
+    #emergency-schedule .period-num { color: #fb923c; }
 
     /* ── SCHEDULE TABLE ── */
     .schedule-wrapper { overflow-x: auto; }
@@ -1161,6 +1194,7 @@
 <nav class="top-nav">
   <a href="#home">ראשי</a>
   <a href="#announcements">הודעות</a>
+  <a href="#emergency-schedule" style="color:#fb923c;font-weight:700">⚠ חירום</a>
   <a href="#schedule">מערכת שעות</a>
   <a href="#events">מבחנים ואירועים</a>
   <a href="#seating">מקומות ישיבה</a>
@@ -1273,6 +1307,41 @@
 </section>
 
 <main>
+
+  <!-- ── EMERGENCY SCHEDULE ── -->
+  <section id="emergency-schedule">
+    <div class="section-header">
+      <div class="section-icon icon-orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <h2>מערכת שעות בחירום</h2>
+    </div>
+    <div class="emergency-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      מערכת זמנית בזמן מבצע שאגת הארי
+    </div>
+    <div class="schedule-wrapper">
+      <table class="schedule-table">
+        <thead>
+          <tr>
+            <th>שיעור</th><th>שעות</th>
+            <th>ראשון</th><th>שני</th><th>שלישי</th><th>רביעי</th><th>חמישי</th><th>שישי</th>
+          </tr>
+        </thead>
+        <tbody id="emergency-schedule-tbody">
+          <tr><td colspan="8" class="time-cell" style="padding:1.5rem;text-align:center">טוען מערכת שעות...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
   <!-- ── SCHEDULE ── -->
   <section id="schedule">
@@ -1839,6 +1908,39 @@
   }
 
   loadTeachers();
+
+  function loadEmergencySchedule() {
+    const tbody = document.getElementById('emergency-schedule-tbody');
+    db.collection('emergency_schedule').orderBy('order').get().then(snapshot => {
+      if (snapshot.empty) { tbody.innerHTML = ''; return; }
+      tbody.innerHTML = snapshot.docs.map(d => {
+        const row  = d.data();
+        const period = row.period || '';
+        const time   = row.time   || '';
+        const type   = row.type   || '';
+        const days   = [row.sun, row.mon, row.tue, row.wed, row.thu, row.fri]
+                         .map(v => (v || '').trim());
+        if (type === 'הפסקה') {
+          return `<tr class="break-row">
+            <td></td><td class="time-cell">${time}</td>
+            <td colspan="6">${days[0]}</td>
+          </tr>`;
+        }
+        const dayCells = days.map(d =>
+          d ? `<td>${d}</td>` : `<td class="empty-cell">—</td>`
+        ).join('');
+        return `<tr>
+          <td class="period-num">${period}</td>
+          <td class="time-cell">${time}</td>
+          ${dayCells}
+        </tr>`;
+      }).join('');
+    }).catch(() => {
+      tbody.innerHTML = '<tr><td colspan="8" class="time-cell" style="padding:1.5rem;text-align:center">שגיאה בטעינת המערכת</td></tr>';
+    });
+  }
+
+  loadEmergencySchedule();
 
   function loadSchedule() {
     const tbody = document.getElementById('schedule-tbody');
