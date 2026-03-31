@@ -17,11 +17,31 @@ Static HTML file — no server, no framework. Data comes from Firebase Firestore
 
 ## Sections (page order)
 1. **Hero landing page** — school logo (white), class name, then: 5 compact pill nav buttons, then announcements box (הודעות המחנך), then scroll hint
-2. **מערכת שעות** — weekly schedule (Sun–Thu), including break rows
-3. **מבחנים ואירועים** — events, one month at a time with prev/next navigation, category filter
-4. **מקומות ישיבה** — animated classroom seating chart
-5. **צוות המורים** — teacher cards collapsed by default, click to expand contact info
-6. **קישורים חשובים** — 9 link cards (4-column grid); last card is full-width featured NotebookLM card
+2. **מערכת שעות בחירום** *(temporary — see below)* — emergency schedule during מבצע שאגת הארי; orange-red color scheme; reads from `emergency_schedule` Firestore collection
+3. **מערכת שעות** — weekly schedule (Sun–Thu), including break rows
+4. **מבחנים ואירועים** — events, one month at a time with prev/next navigation, category filter
+5. **מקומות ישיבה** — animated classroom seating chart
+6. **צוות המורים** — teacher cards collapsed by default, click to expand contact info
+7. **קישורים חשובים** — 9 link cards (4-column grid); last card is full-width featured NotebookLM card
+
+## Emergency Schedule — Temporary Section (מבצע שאגת הארי)
+Added during the Iran war. **To remove it when no longer needed:**
+
+### index.html
+1. Remove the nav link: `<a href="#emergency-schedule" ...>⚠ חירום</a>`
+2. Remove the entire `<!-- ── EMERGENCY SCHEDULE ──` section (the `<section id="emergency-schedule">` block)
+3. Remove the CSS blocks: `/* ── EMERGENCY SCHEDULE ──` and `#emergency-schedule::before`
+4. Remove the `icon-orange` CSS rule
+5. Remove the `loadEmergencySchedule()` function and its `loadEmergencySchedule()` call
+
+### admin.html
+1. Remove the `<button ... onclick="showTab('emergency', this)">⚠ חירום</button>` tab button
+2. Remove the `<!-- ── Emergency Schedule ──` tab content div (`id="tab-emergency"`)
+3. Remove the `if (name === 'emergency') loadEmergencySchedule();` line in `showTab`
+4. Remove the `loadEmergencySchedule`, `updateEmergencyScheduleField`, and `copyFromRegularSchedule` functions
+
+### Firestore
+- Optionally delete the `emergency_schedule` collection from Firebase Console
 
 ## Admin Panel
 - **URL:** `kita2.vercel.app/admin.html`
@@ -36,6 +56,7 @@ Static HTML file — no server, no framework. Data comes from Firebase Firestore
 | אירועים | Add form at top with date picker + category dropdown; list below with Delete |
 | מורים | Add form at top; table below scrolls horizontally; Delete button per row |
 | מערכת שעות | Horizontally scrollable inline table — click any cell to edit, auto-saves on blur |
+| מערכת שעות בחירום | Same inline table as regular schedule; "העתק ממערכת הרגילה" button seeds it from the regular schedule |
 | מקומות ישיבה | Drag-and-drop grid — drag card to swap; click `+` on empty slot to add; click `×` to remove |
 
 ### Seating grid details
