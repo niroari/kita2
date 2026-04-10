@@ -1326,7 +1326,7 @@
         <line x1="12" y1="8" x2="12" y2="12"/>
         <line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
-      מערכת זמנית בזמן מבצע שאגת הארי
+      מערכת זמנית
     </div>
     <div class="schedule-wrapper">
       <table class="schedule-table">
@@ -1923,7 +1923,7 @@
         if (type === 'הפסקה') {
           return `<tr class="break-row">
             <td></td><td class="time-cell">${time}</td>
-            <td colspan="6">${days[0]}</td>
+            <td colspan="6"></td>
           </tr>`;
         }
         const dayCells = days.map(d =>
