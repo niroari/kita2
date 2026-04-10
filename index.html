@@ -1194,7 +1194,7 @@
 <nav class="top-nav">
   <a href="#home">ראשי</a>
   <a href="#announcements">הודעות</a>
-  <a href="#emergency-schedule" style="color:#fb923c;font-weight:700">⚠ חירום</a>
+  <a id="emergency-nav-link" href="#emergency-schedule" style="color:#fb923c;font-weight:700;display:none">⚠ חירום</a>
   <a href="#schedule">מערכת שעות</a>
   <a href="#events">מבחנים ואירועים</a>
   <a href="#seating">מקומות ישיבה</a>
@@ -1309,7 +1309,7 @@
 <main>
 
   <!-- ── EMERGENCY SCHEDULE ── -->
-  <section id="emergency-schedule">
+  <section id="emergency-schedule" style="display:none">
     <div class="section-header">
       <div class="section-icon icon-orange">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1910,8 +1910,13 @@
   loadTeachers();
 
   function loadEmergencySchedule() {
-    const tbody = document.getElementById('emergency-schedule-tbody');
-    db.collection('emergency_schedule').orderBy('order').get().then(snapshot => {
+    db.collection('settings').doc('site').get().then(settingsDoc => {
+      const visible = settingsDoc.exists ? (settingsDoc.data().emergencyVisible === true) : false;
+      document.getElementById('emergency-schedule').style.display = visible ? '' : 'none';
+      document.getElementById('emergency-nav-link').style.display = visible ? '' : 'none';
+      if (!visible) return;
+      const tbody = document.getElementById('emergency-schedule-tbody');
+      db.collection('emergency_schedule').orderBy('order').get().then(snapshot => {
       if (snapshot.empty) { tbody.innerHTML = ''; return; }
       tbody.innerHTML = snapshot.docs.map(d => {
         const row  = d.data();
@@ -1935,8 +1940,9 @@
           ${dayCells}
         </tr>`;
       }).join('');
-    }).catch(() => {
-      tbody.innerHTML = '<tr><td colspan="8" class="time-cell" style="padding:1.5rem;text-align:center">שגיאה בטעינת המערכת</td></tr>';
+      }).catch(() => {
+        tbody.innerHTML = '<tr><td colspan="8" class="time-cell" style="padding:1.5rem;text-align:center">שגיאה בטעינת המערכת</td></tr>';
+      });
     });
   }
 

@@ -444,6 +444,10 @@
     <div class="section-card" style="border-color:rgba(249,115,22,0.35);background:rgba(67,20,7,0.35)">
       <h2 style="color:#fb923c">⚠ מערכת שעות בחירום</h2>
       <p style="color:#fdba74;font-size:0.88rem;margin-bottom:1rem">מערכת זמנית בזמן מבצע שאגת הארי. לחץ על תא כדי לערוך. שינויים נשמרים אוטומטית.</p>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem">
+        <button id="emg-toggle-btn" class="btn" onclick="toggleEmergencyVisibility()" style="min-width:160px">טוען...</button>
+        <span id="emg-visibility-label" style="font-size:0.85rem;color:#fdba74"></span>
+      </div>
       <button class="btn btn-primary" style="margin-bottom:1rem" onclick="copyFromRegularSchedule()">העתק ממערכת הרגילה</button>
       <div id="emergency-editor" class="loading">טוען...</div>
       <div class="status-msg" id="emg-status"></div>
@@ -758,6 +762,9 @@
   async function loadEmergencySchedule() {
     loaded['emergency'] = true;
     const el = document.getElementById('emergency-editor');
+    const settingsDoc = await db.collection('settings').doc('site').get();
+    const isVisible = settingsDoc.exists ? (settingsDoc.data().emergencyVisible === true) : false;
+    updateEmergencyToggleBtn(isVisible);
     const snap = await db.collection('emergency_schedule').orderBy('order').get();
     if (snap.empty) {
       el.innerHTML = `<div style="color:#fdba74;font-size:0.9rem;padding:1rem 0">
@@ -815,6 +822,32 @@
     showStatus('emg-status', 'הועתק בהצלחה ✓');
     loaded['emergency'] = false;
     loadEmergencySchedule();
+  }
+
+  function updateEmergencyToggleBtn(visible) {
+    const btn = document.getElementById('emg-toggle-btn');
+    const label = document.getElementById('emg-visibility-label');
+    if (visible) {
+      btn.textContent = 'הסתר מהדף הראשי';
+      btn.style.cssText += ';background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.5);color:#fca5a5';
+      label.textContent = 'כרגע: מוצג';
+    } else {
+      btn.textContent = 'הצג בדף הראשי';
+      btn.style.cssText += ';background:rgba(34,197,94,0.2);border-color:rgba(34,197,94,0.5);color:#86efac';
+      label.textContent = 'כרגע: מוסתר';
+    }
+  }
+
+  async function toggleEmergencyVisibility() {
+    const btn = document.getElementById('emg-toggle-btn');
+    btn.disabled = true;
+    const ref = db.collection('settings').doc('site');
+    const doc = await ref.get();
+    const current = doc.exists ? (doc.data().emergencyVisible === true) : false;
+    await ref.set({ emergencyVisible: !current }, { merge: true });
+    updateEmergencyToggleBtn(!current);
+    btn.disabled = false;
+    showStatus('emg-status', !current ? 'הסעיף מוצג בדף הראשי ✓' : 'הסעיף מוסתר מהדף הראשי ✓');
   }
 
   // ══════════════════════════════════════════════════════════
